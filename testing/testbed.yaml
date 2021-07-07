@@ -1,0 +1,89 @@
+testbed:
+  name: ITNSA Skill Challenge TSHOOT
+  credentials:
+    default:
+      username: '%ENV{DEFAULT_USER}'
+      password: '%ENV{DEFAULT_PASSWORD}'
+
+devices:
+  localhost:
+    os: linux
+    type: linux
+    credentials:
+      default:
+        password: '%ENV{LOCAL_PASSWORD}'
+        username: '%ENV{LOCAL_USER}'
+    connections:
+      ssh:
+        protocol: ssh
+        ip: localhost
+        port: 22
+        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        arguments:
+          connection_timeout: 15
+    custom:
+      rg: rg-comp-99
+      prefix: comp-99
+  cisco-eastus:
+    os: ios
+    type: router
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 1.1.1.1
+        port: 22
+        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        arguments:
+          connection_timeout: 15
+  cisco-westus:
+    os: ios
+    type: router
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 1.1.1.1
+        port: 22
+        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        arguments:
+          connection_timeout: 15
+  cisco-southcentralus:
+    os: ios
+    type: router
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 1.1.1.1
+        port: 22
+        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
+        arguments:
+          connection_timeout: 15
+  ubuntu-eastus:
+    os: linux
+    type: linux
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 10.1.10.6
+        proxy: cisco-eastus
+        arguments:
+          connection_timeout: 15
+  ubuntu-westus:
+    os: linux
+    type: linux
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 10.2.10.6
+        proxy: cisco-westus
+        arguments:
+          connection_timeout: 15
+  ubuntu-southcentralus:
+    os: linux
+    type: linux
+    connections:
+      ssh:
+        protocol: ssh
+        ip: 10.3.10.6
+        proxy: cisco-southcentralus
+        arguments:
+          connection_timeout: 15

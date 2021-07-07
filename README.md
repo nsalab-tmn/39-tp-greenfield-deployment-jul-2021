@@ -1,2 +1,10 @@
-# 39-tp-greenfield-deployment-jul-2021
-Test project for greenfield deployment of geo-distributed web application 
+![](tickets/topology.png)
+
+## Test project description
+TODO
+
+### Test project objectives:
+TODO
+
+### Marking description:
+TODO

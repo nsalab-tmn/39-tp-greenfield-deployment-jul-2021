@@ -1,0 +1,50 @@
+This is example how to request supercertificate from letsencrypt. In the hook script files we are using azure dns hosted zone az.skillscloud.company. Please review them before using the script.
+```
+sudo certbot certonly --manual \
+ --manual-auth-hook ./cert-azure-auth.sh \
+ --manual-cleanup-hook ./cert-azure-cleanup.sh \
+  --preferred-challenges=dns \
+  --email hostmaster@az.skillscloud.company \
+  --server https://acme-v02.api.letsencrypt.org/directory \
+  --agree-tos \
+  -d "*.az.skillscloud.company" \
+  -d "*.comp-01.az.skillscloud.company" \
+  -d "*.comp-02.az.skillscloud.company" \
+  -d "*.comp-03.az.skillscloud.company" \
+  -d "*.comp-04.az.skillscloud.company" \
+  -d "*.comp-05.az.skillscloud.company" \
+  -d "*.comp-06.az.skillscloud.company" \
+  -d "*.comp-07.az.skillscloud.company" \
+  -d "*.comp-08.az.skillscloud.company" \
+  -d "*.comp-09.az.skillscloud.company" \
+  -d "*.comp-10.az.skillscloud.company" \
+  -d "*.comp-11.az.skillscloud.company" \
+  -d "*.comp-12.az.skillscloud.company" \
+  -d "*.comp-13.az.skillscloud.company" \
+  -d "*.comp-14.az.skillscloud.company" \
+  -d "*.comp-15.az.skillscloud.company" \
+  -d "*.comp-16.az.skillscloud.company" \
+  -d "*.comp-17.az.skillscloud.company" \
+  -d "*.comp-18.az.skillscloud.company" \
+  -d "*.comp-19.az.skillscloud.company" \
+  -d "*.comp-20.az.skillscloud.company" \
+  -d "*.comp-21.az.skillscloud.company" \
+  -d "*.comp-22.az.skillscloud.company" \
+  -d "*.comp-23.az.skillscloud.company" \
+  -d "*.comp-24.az.skillscloud.company" \
+  -d "*.comp-25.az.skillscloud.company" \
+  -d "*.comp-26.az.skillscloud.company" \
+  -d "*.comp-27.az.skillscloud.company" \
+  -d "*.comp-28.az.skillscloud.company" \
+  -d "*.comp-29.az.skillscloud.company" \
+  -d "*.comp-30.az.skillscloud.company" \
+  -d "*.comp-31.az.skillscloud.company" \
+  -d "*.comp-32.az.skillscloud.company" \
+  -d "*.comp-33.az.skillscloud.company" \
+  -d "*.comp-34.az.skillscloud.company" \
+  -d "*.comp-35.az.skillscloud.company" \
+  -d "*.comp-36.az.skillscloud.company" \
+  -d "*.comp-37.az.skillscloud.company" \
+  -d "*.comp-38.az.skillscloud.company" \
+  -d "*.comp-39.az.skillscloud.company" 
+```

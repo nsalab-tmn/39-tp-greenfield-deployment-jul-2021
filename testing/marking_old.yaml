@@ -1,0 +1,237 @@
+testcases:
+  Testcase_A:
+    name: Network troubleshooting
+    tests:
+      Ticket_01:
+        - desc: Check SSH port translation from internet
+          device: localhost
+          exec_command: "sshpass -p VeryLongP@ssw0rd ssh -p 4422 -o ConnectTimeout=1 -o ConnectionAttempts=1 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null superadmin@westus.$PREFIX.az.skillscloud.company 'hostname'"
+          assert_value: "ubuntu-westus"
+        - desc: Check SSH port translation rule
+          device: tshoot-cisco-westus
+          exec_command: show ip nat translation src-port 22
+          assert_value: "tcp  10.2.1.4:4422         10.2.10.6:22"
+        - desc: Check wrong NAT entry has been removed
+          device: tshoot-cisco-westus
+          exec_command: show ip nat translation src-port 22
+          assert_not: "udp  10.2.1.4:4422         10.2.10.6:22"
+      Ticket_02:
+        - desc: Check track return value
+          device: tshoot-cisco-southcentralus
+          exec_command: show track 100
+          assert_value: "Latest operation return code: OK"
+        - desc: Check SLA params
+          device: tshoot-cisco-southcentralus
+          exec_command: sh ip sla summary 
+          assert_value: "icmp-echo   8.8.8.8"
+        - desc: Check SLA TTL
+          device: tshoot-cisco-southcentralus
+          exec_command: show ip sla statistics 
+          assert_value: "Operation time to live: Forever"
+    cleanup_steps:
+  Testcase_B:
+    name: Failover scenario East-West
+    tests:
+      Ticket_03_East_West_Failover:
+        - desc: Shutdown tunnel12 (East <-> West)
+          device: tshoot-cisco-eastus
+          config_command: 
+            - interface tunnel 12
+            - shutdown
+        - desc: Connectivity East <-> West
+          device: tshoot-cisco-eastus
+          exec_command: ping 10.2.10.4 source Gi2 repeat 10
+          assert_value: "!!!"
+        - desc: Routes filter on South
+          device: tshoot-cisco-southcentralus
+          exec_command: show ip protocols
+          assert_values: 
+            - "Tunnel13 filtered by ACL_DL_TO_EAST"
+            - "Tunnel23 filtered by ACL_DL_TO_WEST"
+          assert_not_values: 
+            - "ospf"
+            - "rip"
+            - "bgp"
+        - desc: ACL to East (South)
+          device: tshoot-cisco-southcentralus
+          exec_command: show access-lists ACL_DL_TO_EAST
+          assert_value: "deny   any"
+          assert_not: "permit any"
+        - desc: ACL to West (South)
+          device: tshoot-cisco-southcentralus
+          exec_command: show access-lists ACL_DL_TO_WEST
+          assert_value: "deny   any"
+          assert_not: "permit any"        
+    cleanup_steps:
+      - desc: bring back tunnel 12 
+        device: tshoot-cisco-eastus
+        config_command: 
+          - interface tunnel 12
+          - no shutdown
+  Testcase_C:
+    name: Failover scenario West-South
+    tests:
+      Ticket_03_West_South_Failover:
+        - desc: Shutdown tunnel23 (West <-> South)
+          device: tshoot-cisco-westus
+          config_command: 
+            - interface tunnel 23
+            - shutdown
+        - desc: Connectivity West <-> South
+          device: tshoot-cisco-westus
+          exec_command: ping 10.3.10.4 source Gi2 repeat 10
+          assert_value: "!!!"
+        - desc: Routes filter on East
+          device: tshoot-cisco-eastus
+          exec_command: show ip protocols
+          assert_values: 
+            - "Tunnel12 filtered by ACL_DL_TO_WEST"
+            - "Tunnel13 filtered by ACL_DL_TO_SOUTH"
+          assert_not_values: 
+            - "ospf"
+            - "rip"
+            - "bgp"
+        - desc: ACL to West (East)
+          device: tshoot-cisco-eastus
+          exec_command: show access-lists ACL_DL_TO_WEST
+          assert_value: "deny   any"
+          assert_not: "permit any"
+        - desc: ACL to South (East)
+          device: tshoot-cisco-eastus
+          exec_command: show access-lists ACL_DL_TO_SOUTH
+          assert_value: "deny   any"
+          assert_not: "permit any"        
+    cleanup_steps:
+      - desc: bring back tunnel 23 
+        device: tshoot-cisco-westus
+        config_command: 
+          - interface tunnel 23
+          - no shutdown
+  Testcase_D:
+    name: Failover scenario South-East
+    tests:
+      Ticket_03_South_East_Failover:
+        - desc: Shutdown tunnel13 (South <-> East)
+          device: tshoot-cisco-southcentralus
+          config_command: 
+            - interface tunnel 13
+            - shutdown
+        - desc: Connectivity South <-> East
+          device: tshoot-cisco-southcentralus
+          exec_command: ping 10.1.10.4 source Gi2 repeat 10
+          assert_value: "!!!"
+        - desc: Routes filter on West
+          device: tshoot-cisco-westus
+          exec_command: show ip protocols
+          assert_values: 
+            - "Tunnel12 filtered by ACL_DL_TO_EAST"
+            - "Tunnel23 filtered by ACL_DL_TO_SOUTH"
+          assert_not_values: 
+            - "ospf"
+            - "rip"
+            - "bgp"
+        - desc: ACL to East (West)
+          device: tshoot-cisco-westus
+          exec_command: show access-lists ACL_DL_TO_EAST
+          assert_value: "deny   any"
+          assert_not: "permit any"
+        - desc: ACL to South (West)
+          device: tshoot-cisco-westus
+          exec_command: show access-lists ACL_DL_TO_SOUTH
+          assert_value: "deny   any"
+          assert_not: "permit any"        
+    cleanup_steps:
+      - desc: bring back tunnel 13 
+        device: tshoot-cisco-southcentralus
+        config_command: 
+          - interface tunnel 13
+          - no shutdown
+  Testcase_E:
+    name: Linux
+    tests:
+      Ticket_04_Filesystem_security:
+        - desc: File shadow must be unreadable
+          device: ubuntu-eastus
+          exec_command: "cat /etc/shadow"          
+          assert_value: "Permission denied" 
+        - desc: File shadow must be readable by su
+          device: ubuntu-eastus
+          exec_command: "sudo cat /etc/shadow"
+          assert_value: "root:"
+        - desc: cat have right mod, owner and attr
+          device: ubuntu-eastus
+          exec_command: "ls -la /usr/bin/cat && lsattr /usr/bin/cat"
+          assert_not_values: 
+            - "-rws"
+            - "-i-"
+      Ticket_05_Web_redirect:
+        - desc: Check http redirect with correct code
+          device: localhost
+          exec_command: curl -m 10 http://$PREFIX.az.skillscloud.company -v 2> >(grep Location) | grep Location
+          assert_values: 
+            - "Location: https://" 
+            - ".az.skillscloud.company/"
+      Ticket_05_Web_security:
+        - desc: Web page works fine
+          device: localhost
+          exec_command: curl -m 10 -k https://$PREFIX.az.skillscloud.company 2> /dev/null | grep portfolioModal3
+          assert_value: portfolioModal3
+        - desc: Check that ssl is turned on
+          device: localhost
+          exec_command: curl -m 10 https://$PREFIX.az.skillscloud.company
+          assert_not_values: 
+            - "error"
+            - "expired"
+            - "problem"
+      Ticket_06_Docker_app:
+        - desc: Check if application is working
+          device: localhost
+          exec_command: curl -m 10 https://westus.$PREFIX.az.skillscloud.company
+          assert_not_values: 
+            - "502 Bad Gateway"
+            - "Failed to connect"
+            - "Connection timed out"
+            - "error"
+            - "Could not resolve host"
+      Ticket_06_Docker_port_exposed:
+        - desc: Check that port exposed
+          device: ubuntu-westus
+          exec_command: "sudo cat /root/src/ts39-api/Dockerfile | grep EXPOSE"          
+          assert_value: "EXPOSE"
+    cleanup_steps:
+  Testcase_F:
+    name: Azure
+    tests:
+      Ticket_07_Public_DNS:
+        - desc: Check DNS record
+          device: localhost
+          exec_command: nslookup tm.$PREFIX.az.skillscloud.company $(dig ns $PREFIX.az.skillscloud.company +short | head -n1)
+          assert_not_values:
+            - "server can't find"
+            - "Address: 10.2.10.6"
+        - desc: Check website is available
+          device: localhost
+          exec_command: curl -m 10 https://tm.$PREFIX.az.skillscloud.company 2> /dev/null | grep InfluxDB
+          assert_value: InfluxDB
+      Ticket_08_SDN_Routing:
+        - desc: South route table has default route
+          device: localhost
+          exec_command: az network route-table route list -g rg-$PREFIX --route-table-name $PREFIX-rt-southcentralus
+          assert_values: 
+            - "\"addressPrefix\": \"0.0.0.0/0\""
+            - "\"nextHopIpAddress\": \"10.3.10.4\""
+            - "\"nextHopType\": \"VirtualAppliance\""
+        - desc: South client has access to internet
+          device: ubuntu-southcentralus
+          exec_command: ping -c2 google.com ; ping -c5 google.com 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+      Ticket_09_Bastion_access:
+        - desc: Check Ubuntu South available over SSH
+          device: ubuntu-southcentralus
+          exec_command: ssh devuser@localhost -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null whoami
+          assert_not: Permission denied
+        - desc: Check SSH allow config
+          device: ubuntu-southcentralus
+          exec_command: cat /etc/ssh/sshd_config.d/10-allow.conf
+          assert_value: devuser
+    cleanup_steps:
