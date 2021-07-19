@@ -45,6 +45,7 @@ resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
 }
 
 ##WESTUS============
@@ -94,6 +95,7 @@ resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
+   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl",{})):null
   
 }
 
@@ -145,4 +147,5 @@ resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
+   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
 }

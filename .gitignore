@@ -1,1 +1,7 @@
 testing/.env
+.terraform
+*.tfstate*
+.plan*
+.venv
+.terraform.lock.hcl
+.vscode
