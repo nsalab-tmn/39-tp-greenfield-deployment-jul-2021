@@ -1,5 +1,5 @@
 resource "azurerm_resource_group" "main" {
-  name     = "rg-${var.prefix}"
+  name     = "rg-${var.competition_instance}-${var.prefix}"
   location = "eastus"
 }
 
