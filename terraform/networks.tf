@@ -31,6 +31,16 @@ resource "azurerm_route_table" "rt-eastus" {
   name                = "${var.prefix}-rt-eastus"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
+  dynamic "route" {
+    for_each = var.deploy_routes ? toset([1]) : toset([])
+    content {
+          name                   = "${var.prefix}-rt-eastus"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "VirtualAppliance"
+          next_hop_in_ip_address = "10.1.10.4"
+    }
+  }
+
 
 }
 
@@ -71,6 +81,15 @@ resource "azurerm_route_table" "rt-westus" {
   name                = "${var.prefix}-rt-westus"
   location            = azurerm_virtual_network.westus.location
   resource_group_name = azurerm_resource_group.main.name
+  dynamic "route" {
+    for_each = var.deploy_routes ? toset([1]) : toset([])
+    content {
+          name                   = "${var.prefix}-rt-westus"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "VirtualAppliance"
+          next_hop_in_ip_address = "10.2.10.4"
+    }
+  }
 }
 
 resource "azurerm_subnet_route_table_association" "rt-westus" {
@@ -109,6 +128,15 @@ resource "azurerm_route_table" "rt-southcentralus" {
   name                = "${var.prefix}-rt-southcentralus"
   location            = azurerm_virtual_network.southcentralus.location
   resource_group_name = azurerm_resource_group.main.name
+  dynamic "route" {
+    for_each = var.deploy_routes ? toset([1]) : toset([])
+    content {
+          name                   = "${var.prefix}-rt-southcentralus"
+          address_prefix         = "0.0.0.0/0"
+          next_hop_type          = "VirtualAppliance"
+          next_hop_in_ip_address = "10.3.10.4"
+    }
+  }
 
 }
 

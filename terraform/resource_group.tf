@@ -1,20 +1,5 @@
-variable "prefix" {
-  default = "comp-99"
-}
-
-variable "adminuser" {
-  default = "azadmin"
-}
-# variable "adminpass" {
-#   default = "4eEAV4_H!M^a"
-# }
-
-variable "prod_rg" {
-  default = "nsalab-prod"
-}
-
 resource "azurerm_resource_group" "main" {
-  name     = "rg-${var.prefix}"
+  name     = "rg-${var.competition_instance}-${var.prefix}"
   location = "eastus"
 }
 
@@ -29,9 +14,9 @@ resource "random_string" "pass" {
 }
 
 resource "azuread_user" "competitor" {
-  user_principal_name = "${var.prefix}@nsalab.org"
-  display_name        = var.prefix
-  mail_nickname       = var.prefix
+  user_principal_name = "${var.competition_instance}-${var.prefix}@nsalab.org"
+  display_name        = "${var.competition_instance}-${var.prefix}"
+  mail_nickname       = "${var.competition_instance}-${var.prefix}"
   password            = random_string.pass.result
 }
 
@@ -39,8 +24,4 @@ resource "azurerm_role_assignment" "example" {
   scope                = azurerm_resource_group.main.id
   role_definition_name = "Contributor"
   principal_id         = azuread_user.competitor.object_id
-}
-
-output "pass" {
-  value = {(var.prefix) = random_string.pass.result}
 }
