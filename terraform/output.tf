@@ -2,11 +2,6 @@ output "pass" {
   value = {(azuread_user.competitor.user_principal_name) = random_string.pass.result}
 }
 
-
-output "eastus_priv_net" {
-    value = azurerm_subnet.eastus-private01.address_prefixes
-}
-
 output "networks" {
     value = {
         "${var.prefix}-eastus-priv" = azurerm_subnet.eastus-private01.address_prefix,
