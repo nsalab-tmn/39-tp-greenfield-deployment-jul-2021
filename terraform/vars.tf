@@ -28,3 +28,15 @@ variable "deploy_routes" {
 variable "deploy_dns_a_records" {
   default = false
 }
+
+variable "region_octets" {
+  default = ["1", "2", "3"]
+}
+
+variable "subnet_octets" {
+  default = ["1", "10", "99"]
+}
+
+variable "host_octets" {
+  default = ["4", "6"]
+}

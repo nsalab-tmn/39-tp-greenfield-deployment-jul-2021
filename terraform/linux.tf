@@ -10,7 +10,7 @@ resource "azurerm_network_interface" "ubuntu-eastus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.1.10.6"
+    private_ip_address            = "10.${var.region_octets[0]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
@@ -60,7 +60,7 @@ resource "azurerm_network_interface" "ubuntu-westus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.2.10.6"
+    private_ip_address            = "10.${var.region_octets[1]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
@@ -111,7 +111,7 @@ resource "azurerm_network_interface" "ubuntu-southcentralus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.3.10.6"
+    private_ip_address            = "10.${var.region_octets[2]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
