@@ -217,7 +217,7 @@ providers:
 certificatesResolvers:
   letsEncrypt:
     acme:
-      email: postmaster@comp-01.az.skillscloud.company
+      email: postmaster@${prefix}.az.skillscloud.company
       storage: acme.json
       caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
       httpChallenge:
@@ -232,7 +232,7 @@ tls:
 http:
   routers:
     http-catchall:
-      rule: Host("app.comp-01.az.skillscloud.company")
+      rule: Host("app.${prefix}.az.skillscloud.company")
       # rule: hostregexp("{.+}")
       entrypoints:
       - http
@@ -240,25 +240,25 @@ http:
       - redirect-to-https
       service: noop@internal
     web-53:
-      rule: Host("app.comp-01.az.skillscloud.company")
+      rule: Host("app.${prefix}.az.skillscloud.company")
       entrypoints:
       - https
       service: web-53
       tls: {}
     web-53-01:
-      rule: Host("westus.comp-01.az.skillscloud.company")
+      rule: Host("westus.${prefix}.az.skillscloud.company")
       entrypoints:
       - https
       service: web-53
       tls: {}
     web-53-02:
-      rule: Host("eastus.comp-01.az.skillscloud.company")
+      rule: Host("eastus.${prefix}.az.skillscloud.company")
       entrypoints:
       - https
       service: web-53
       tls: {}
     web-53-03:
-      rule: Host("southcentralus.comp-01.az.skillscloud.company")
+      rule: Host("southcentralus.${prefix}.az.skillscloud.company")
       entrypoints:
       - https
       service: web-53
@@ -273,9 +273,9 @@ http:
     web-53:
       loadbalancer:
         servers:
-          - url: "http://10.1.10.6:8080/"
-          - url: "http://10.2.10.6:8080/"
-          - url: "http://10.3.10.6:8080/"
+          - url: "http://${platform_01_ip}:8080/"
+          - url: "http://${platform_02_ip}:8080/"
+          - url: "http://${platform_03_ip}:8080/"
         healthCheck:
           path: "/health"
           interval: "1s"

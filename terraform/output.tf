@@ -21,9 +21,9 @@ output "static-params" {
     "platform-01-ip" = azurerm_network_interface.ubuntu-eastus.private_ip_address
     "platform-02-ip" = azurerm_network_interface.ubuntu-westus.private_ip_address
     "platform-03-ip" = azurerm_network_interface.ubuntu-southcentralus.private_ip_address
-    "private-01-ip" = azurerm_network_interface.cisco-eastus.private_ip_address
-    "private-02-ip" = azurerm_network_interface.cisco-westus.private_ip_address
-    "private-03-ip" = azurerm_network_interface.cisco-southcentralus.private_ip_address
+    "gw-01-private-ip" = azurerm_network_interface.cisco-eastus.private_ip_address
+    "gw-02-private-ip" = azurerm_network_interface.cisco-westus.private_ip_address
+    "gw-03-private-ip" = azurerm_network_interface.cisco-southcentralus.private_ip_address
   }
 }
 

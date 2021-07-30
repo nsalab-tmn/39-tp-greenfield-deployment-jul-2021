@@ -45,7 +45,8 @@ resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_public_ip.cisco-eastus.ip_address,platform_02_ip=azurerm_public_ip.cisco-westus.ip_address,platform_03_ip=azurerm_public_ip.cisco-southcentralus.ip_address})):null
 }
 
 ##WESTUS============
@@ -95,8 +96,8 @@ resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl",{})):null
-  
+   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_public_ip.cisco-eastus.ip_address,platform_02_ip=azurerm_public_ip.cisco-westus.ip_address,platform_03_ip=azurerm_public_ip.cisco-southcentralus.ip_address})):null
 }
 
 ##SOUTHCENTRALUS============
@@ -147,5 +148,6 @@ resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_public_ip.cisco-eastus.ip_address,platform_02_ip=azurerm_public_ip.cisco-westus.ip_address,platform_03_ip=azurerm_public_ip.cisco-southcentralus.ip_address})):null
 }
