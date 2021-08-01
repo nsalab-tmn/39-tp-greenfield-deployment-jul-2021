@@ -101,7 +101,7 @@ resource "azurerm_linux_virtual_machine" "cisco-eastus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,
   priv_ubuntu=azurerm_network_interface.ubuntu-eastus.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0) })):null
 }
 ##WESTUS============
@@ -207,7 +207,7 @@ resource "azurerm_linux_virtual_machine" "cisco-westus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-westus.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-westus.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
 }
 
 ##SOUTHCENTRALUS============
@@ -313,5 +313,5 @@ resource "azurerm_linux_virtual_machine" "cisco-southcentralus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-southcentralus.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-southcentralus.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
 }
