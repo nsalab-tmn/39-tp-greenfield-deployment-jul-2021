@@ -10,7 +10,7 @@ resource "azurerm_network_interface" "ubuntu-eastus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.1.10.6"
+    private_ip_address            = "10.${var.region_octets[0]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
@@ -45,7 +45,10 @@ resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-eastus.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
+    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
+    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
 }
 
 ##WESTUS============
@@ -60,7 +63,7 @@ resource "azurerm_network_interface" "ubuntu-westus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.2.10.6"
+    private_ip_address            = "10.${var.region_octets[1]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
@@ -95,8 +98,10 @@ resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl",{})):null
-  
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-westus.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
+    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
+    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
 }
 
 ##SOUTHCENTRALUS============
@@ -111,7 +116,7 @@ resource "azurerm_network_interface" "ubuntu-southcentralus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.3.10.6"
+    private_ip_address            = "10.${var.region_octets[2]}.${var.subnet_octets[1]}.${var.host_octets[1]}"
   }
 }
 
@@ -147,5 +152,8 @@ resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-ubuntu.tpl", {})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-southcentralus.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
+    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
+    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
 }

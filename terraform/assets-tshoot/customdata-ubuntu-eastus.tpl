@@ -1,3 +1,45 @@
+#!/bin/bash
+while ! ping -c 1 -W 1 1.1.1.1; do
+    echo "Waiting for 1.1.1.1 - network interface might be down..."
+    sleep 5
+done
+set -xe
+snap install docker --classic
+mkdir ~/src
+cd ~/src
+
+cat <<EOF >Dockerfile
+FROM alpine
+WORKDIR /opt
+ADD web-53 config.yaml ./
+EXPOSE 8080
+ENTRYPOINT ./web-53
+EOF
+wget https://test-web53.s3.eu-central-1.amazonaws.com/web-53
+wget https://test-web53.s3.eu-central-1.amazonaws.com/config.yaml
+chmod +x web-53
+#adjust config.yaml: Redis.Host: redis-53
+cat <<EOF > config.yaml
+AWS:
+  Region: eu-central-1
+Server:
+  Host: 0.0.0.0
+  Port: 8080
+DynamoDB:
+  Region: eu-central-1
+  TableName: test-web-53
+  PrimaryPartitionKey: recordId
+Redis:
+  Host: redis-53
+  Port: 6379
+EOF
+
+docker build . -t web-53
+docker network create --driver bridge web53-net
+docker run --restart=always -d --name=web-53 --network=web53-net  \
+    -v "$(pwd)/config.yaml:/opt/config.yaml" -p 8080:8080 web-53
+
+cat <<EOF > supercert.pem
 -----BEGIN CERTIFICATE-----
 MIILejCCCmKgAwIBAgISAzjiL0cdBtSlJdLJehC7ZkOVMA0GCSqGSIb3DQEBCwUA
 MDIxCzAJBgNVBAYTAlVTMRYwFAYDVQQKEw1MZXQncyBFbmNyeXB0MQswCQYDVQQD
@@ -123,3 +165,125 @@ WCLKTVXkcGdtwlfFRjlBz4pYg1htmf5X6DYO8A4jqv2Il9DjXA6USbW1FzXSLr9O
 he8Y4IWS6wY7bCkjCWDcRQJMEhg76fsO3txE+FiYruq9RUWhiF1myv4Q6W+CyBFC
 Dfvp7OOGAN6dEOM4+qR9sdjoSYKEBpsr6GtPAQw4dy753ec5
 -----END CERTIFICATE-----
+EOF
+
+cat <<EOF > supercert.key
+-----BEGIN PRIVATE KEY-----
+MIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQDBcy8Sc8uI7fEa
+RmjcbK+THuwLpLZBpYXCBJcjoXh4cfYSeG5UM5J6ifVXfFNpjfT8o4moqgKsfdSi
+UsrnfR5qxpBP3ALJ/aeTJFIBwhKfsAaBUfo5t6iynSZay8MuP/xs7v/e+d0i65B4
+n8BYa3FrcVQ/seES7idMLpNteGCSO9O1a93QPZ4VQGAeANvakb7AfAgh4jPKj1Fi
+jY1S59Fm0Ezuib02wmlK77I1M6iN/8AJ3P42Mkh54EnypvLcHACIuEWPMEkkPbvy
+uxvE81mKNKjUxYUI7SOUSig1zZixwv8qxmdWPMfwY+k3HMlE/qpEsjIsLslDX9gd
+jkjPXvFtAgMBAAECggEBAJI6QjO9ifXYfq6w2GT+Vv1rm1v1xrr6ppARLjoFvW22
+Hx65IBTP4wJztBvMY7TfVHeAGvd+g4TlnMySrsOrBUoLDF0BXq5W6cvE4aRokfFZ
+eqFYWUA1vvQ87Bgn/ELCpUmmo41l7C2QSOWVRCzSEqr3wIphKFRJ5zSj5FcUblM6
+SP6eLtrMehh4VgxnvjqVIVx49PRKkPe2yflTNRgPOQegJoD/XCDl9nO4KKylxDef
+ltfxSQDLU7fv9JJoC9YQASRTTWorkzCyzcHtLT/sM/h9Rj0H6D8S9caQ0b59wOQx
+qws2RLUYJS8BlozDoPiiwK7Y2y1a/GEWFB8481oqONUCgYEA+8ULGSB1KIWmYpPQ
+RwkqZHGuZ7sd+lFeAyMvaXWDwsVovDaXvkNE2zEC92t3muGuWu/pXycOnMMKRonO
+dvZALDffc/wsfAfi5Hxows/hhF852g+/yLf32LrDZU++fFVEb2y3Xoy4R6rZS91k
+Okt1DjuZ+W2FxtuBOvFckleM2QMCgYEAxLNJAUmoh2UPKgDpjyBw5c97K15UiOta
+MZT+o8yAWCllN/FaduFp3qVVlZT8dAwd5Eo2LPuii00mI+Q5o7666Q/sa75N5J9E
+UEMxfZ22o8mWyL4Y1XOnFgSluBYa8ANJn3aIH33vtSVuTv8uz6QstDTohi+ecWQR
+qf9G0dMxKM8CgYEAj0kbAdfZFZDKmrupA2SR/cw9B8gUTYvVR0/VAd3heQ3Eh6lC
+PwQlweFo4MsGrNzXz+VOGdsuk8TkqjRvjoCjEQdTYr0XzBbo6ERtksGghSd000e3
+TFJ2+Z+A6L2zmSsl4Ywr5+GKVy9Cr8x16D9dhRYikTPluMDgEV2f46F0BWUCgYA9
+i8N6DawXwT0/bU2nJQVuQr9NUJSuysVL4kzSv7gg3cL4ACLIM7vGmIDw7s8XGHt5
+5OaSqKGxaJBYhp6qZ5FgP0VAaSlCMbtUSdIAdgqhsP/nC+QFVcygDRA1S2VeWAj/
+Rj1NbUBFs9KSETJ6ceoy8KMY6WlwHVmRkXh9StGE7QKBgCN/gx8NmafG+Y2tERFh
+fouB3tbJa9AGcN5Rwu5EdDm5vtzSj0qJFImd/51KctMgu0oHINg5MCFmxWz+DjLt
+0/bWiAN4grT4ZQgCoHN2moMvTPxr7RudFjH0EwdYx0n3O7dIIQnbpdkVTwUpF4iR
+g7kPwwhUZFoZTgj/Jt7BmjEb
+-----END PRIVATE KEY-----
+EOF
+
+cat <<EOF > traefik.yml
+log:
+  level: "DEBUG"
+api:
+  dashboard: true
+  insecure: true
+
+entryPoints:
+  http:
+    address: ":80"
+  https:
+    address: ":443"
+
+providers:
+  docker:
+    endpoint: "unix:///var/run/docker.sock"
+    exposedByDefault: false
+  file:
+    filename: /etc/traefik/dynamic_conf.yml
+
+certificatesResolvers:
+  letsEncrypt:
+    acme:
+      email: postmaster@${prefix}.az.skillscloud.company
+      storage: acme.json
+      caServer: "https://acme-staging-v02.api.letsencrypt.org/directory"
+      httpChallenge:
+        entryPoint: http
+EOF
+
+cat <<EOF> dynamic_conf.yml
+tls:
+  certificates:
+    - certFile: /etc/traefik/supercert.pem
+      keyFile: /etc/traefik/supercert.key
+http:
+  routers:
+    http-catchall:
+      rule: Host("app.${prefix}.az.skillscloud.company")
+      # rule: hostregexp("{.+}")
+      entrypoints:
+      - http
+      middlewares:
+      - redirect-to-https
+      service: noop@internal
+    web-53:
+      rule: Host("app.${prefix}.az.skillscloud.company")
+      entrypoints:
+      - https
+      service: web-53
+      tls: {}
+    web-53-01:
+      rule: Host("westus.${prefix}.az.skillscloud.company")
+      entrypoints:
+      - https
+      service: web-53
+      tls: {}
+    web-53-02:
+      rule: Host("eastus.${prefix}.az.skillscloud.company")
+      entrypoints:
+      - https
+      service: web-53
+      tls: {}
+    web-53-03:
+      rule: Host("southcentralus.${prefix}.az.skillscloud.company")
+      entrypoints:
+      - https
+      service: web-53
+      tls: {}
+      
+  middlewares:
+    redirect-to-https:
+      redirectScheme:
+        scheme: https
+        permanent: false
+  services:
+    web-53:
+      loadbalancer:
+        servers:
+          - url: "http://${platform_01_ip}:8080/"
+          - url: "http://${platform_02_ip}:8080/"
+          - url: "http://${platform_03_ip}:8080/"
+        healthCheck:
+          path: "/health"
+          interval: "1s"
+          timeout: "2s"
+EOF
+
+docker run -d -p 80:80 -p 443:443 -p 5000:8080  -v "$(pwd)/traefik.yml:/etc/traefik/traefik.yml" -v /var/run/docker.sock:/var/run/docker.sock  -v $(pwd)/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml -v $(pwd)/supercert.pem:/etc/traefik/supercert.pem -v $(pwd)/supercert.key:/etc/traefik/supercert.key --name traefik --network=web53-net traefik:v2.4

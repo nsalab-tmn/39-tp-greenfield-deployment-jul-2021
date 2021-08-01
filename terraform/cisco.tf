@@ -10,7 +10,7 @@ resource "azurerm_network_interface" "cisco-eastus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.1.10.4"
+    private_ip_address            = "10.${var.region_octets[0]}.${var.subnet_octets[1]}.${var.host_octets[0]}"
   }
   enable_ip_forwarding = true
 }
@@ -26,7 +26,7 @@ resource "azurerm_network_interface" "cisco-eastus-public" {
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.1.1.4"
+    private_ip_address            = "10.${var.region_octets[0]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
     public_ip_address_id          = azurerm_public_ip.cisco-eastus.id
   }
   enable_ip_forwarding = true
@@ -101,7 +101,8 @@ resource "azurerm_linux_virtual_machine" "cisco-eastus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,
+  priv_ubuntu=azurerm_network_interface.ubuntu-eastus.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0) })):null
 }
 ##WESTUS============
 resource "azurerm_network_interface" "cisco-westus" {
@@ -115,7 +116,7 @@ resource "azurerm_network_interface" "cisco-westus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.2.10.4"
+    private_ip_address            = "10.${var.region_octets[1]}.${var.subnet_octets[1]}.${var.host_octets[0]}"
   }
   enable_ip_forwarding = true
 }
@@ -131,7 +132,7 @@ resource "azurerm_network_interface" "cisco-westus-public" {
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.2.1.4"
+    private_ip_address            = "10.${var.region_octets[1]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
     public_ip_address_id          = azurerm_public_ip.cisco-westus.id
   }
   enable_ip_forwarding = true
@@ -206,7 +207,7 @@ resource "azurerm_linux_virtual_machine" "cisco-westus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-westus.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
 }
 
 ##SOUTHCENTRALUS============
@@ -221,7 +222,7 @@ resource "azurerm_network_interface" "cisco-southcentralus" {
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.3.10.4"
+    private_ip_address            = "10.${var.region_octets[2]}.${var.subnet_octets[1]}.${var.host_octets[0]}"
   }
   enable_ip_forwarding = true
 }
@@ -237,7 +238,7 @@ resource "azurerm_network_interface" "cisco-southcentralus-public" {
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
-    private_ip_address            = "10.3.1.4"
+    private_ip_address            = "10.${var.region_octets[2]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
     public_ip_address_id          = azurerm_public_ip.cisco-southcentralus.id
   }
   enable_ip_forwarding = true
@@ -312,5 +313,5 @@ resource "azurerm_linux_virtual_machine" "cisco-southcentralus" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/assets/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-southcentralus.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
 }
