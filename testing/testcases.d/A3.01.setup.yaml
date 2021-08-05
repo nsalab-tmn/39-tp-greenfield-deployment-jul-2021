@@ -1,0 +1,12 @@
+- desc: Shutdown tunnel on GW2
+  device: gw-region-02
+  action_chain:
+    - action: find_interface
+      action_vars:
+        network: '{region-01-private-network}'
+        param: outgoing_interface
+    - action: config
+      action_vars:
+        commands: 
+          - interface {outgoing_interface}
+          - shutdown

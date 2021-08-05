@@ -1,237 +1,284 @@
 testcases:
-  Testcase_A:
-    name: Network troubleshooting
+  Testcase_A1:
+    name: A1 - Internet connectivity
     tests:
-      Ticket_01:
-        - desc: Check SSH port translation from internet
-          device: localhost
-          exec_command: "sshpass -p VeryLongP@ssw0rd ssh -p 4422 -o ConnectTimeout=1 -o ConnectionAttempts=1 -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null superadmin@westus.$PREFIX.az.skillscloud.company 'hostname'"
-          assert_value: "ubuntu-westus"
-        - desc: Check SSH port translation rule
-          device: tshoot-cisco-westus
-          exec_command: show ip nat translation src-port 22
-          assert_value: "tcp  10.2.1.4:4422         10.2.10.6:22"
-        - desc: Check wrong NAT entry has been removed
-          device: tshoot-cisco-westus
-          exec_command: show ip nat translation src-port 22
-          assert_not: "udp  10.2.1.4:4422         10.2.10.6:22"
-      Ticket_02:
-        - desc: Check track return value
-          device: tshoot-cisco-southcentralus
-          exec_command: show track 100
-          assert_value: "Latest operation return code: OK"
-        - desc: Check SLA params
-          device: tshoot-cisco-southcentralus
-          exec_command: sh ip sla summary 
-          assert_value: "icmp-echo   8.8.8.8"
-        - desc: Check SLA TTL
-          device: tshoot-cisco-southcentralus
-          exec_command: show ip sla statistics 
-          assert_value: "Operation time to live: Forever"
+      Host_01:
+        - desc: Host 1 can reach its default gateway (A1.01.01.01)
+          device: ubuntu-eastus
+          exec_command: ping -c5 10.1.10.4 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+        - desc: NAT is configured on gateway 1 (A1.01.01.02)
+          device: cisco-eastus
+          exec_command: show ip nat map
+          assert_value: "GigabitEthernet1 overload"
+        - desc: Host 1 can reach external host (A1.01.01.03)
+          device: ubuntu-eastus
+          exec_command: ping -c5 8.8.8.8 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+      Host_02:
+        - desc: Host 2 can reach its default gateway (A1.01.02.01)
+          device: ubuntu-westus
+          exec_command: ping -c5 10.2.10.4 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+        - desc: NAT is configured on gateway 2 (A1.01.02.02)
+          device: cisco-westus
+          exec_command: show ip nat map
+          assert_value: "GigabitEthernet1 overload"
+        - desc: Host 2 can reach external host (A1.01.02.03)
+          device: ubuntu-westus
+          exec_command: ping -c5 8.8.8.8 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+      Host_03:
+        - desc: Host 3 can reach its default gateway (A1.01.03.01)
+          device: ubuntu-southcentralus
+          exec_command: ping -c5 10.2.10.4 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+        - desc: NAT is configured on gateway 3 (A1.01.03.02)
+          device: cisco-southcentralus
+          exec_command: show ip nat map
+          assert_value: "GigabitEthernet1 overload"
+        - desc: Host 3 can reach external host (A1.01.03.03)
+          device: ubuntu-southcentralus
+          exec_command: ping -c5 8.8.8.8 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
     cleanup_steps:
-  Testcase_B:
-    name: Failover scenario East-West
+
+  Testcase_A2:
+    name: A2 - Inter-region connectivity
     tests:
-      Ticket_03_East_West_Failover:
-        - desc: Shutdown tunnel12 (East <-> West)
-          device: tshoot-cisco-eastus
+      Region_01:
+        - desc: Gateway 1 has route to region 2 network (A2.01.01.01)
+          device: cisco-eastus
+          exec_command: show ip route 10.2.10.0
+          assert_not: "Subnet not in table"
+        - desc: Connectivity test from host 1 to host 2 (A2.01.01.02)
+          device: ubuntu-eastus
+          exec_command: ping -c5 10.2.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+      Region_02:
+        - desc: Gateway 2 has route to region 3 network (A2.01.02.01)
+          device: cisco-westus
+          exec_command: show ip route 10.3.10.0
+          assert_not: "Subnet not in table"
+        - desc: Connectivity test from host 2 to host 3 (A2.01.02.02)
+          device: ubuntu-westus
+          exec_command: ping -c5 10.3.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+      Region_03:
+        - desc: Gateway 3 has route to region 1 network (A2.01.03.01)
+          device: cisco-southcentralus
+          exec_command: show ip route 10.1.10.0
+          assert_not: "Subnet not in table"
+        - desc: Connectivity test from host 3 to host 1 (A2.01.03.02)
+          device: ubuntu-southcentralus
+          exec_command: ping -c5 10.1.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
+    cleanup_steps:
+
+  Testcase_A3_1:
+    name: A3 - Connectivity fault-tolerance (case 1)
+    tests:
+      Case_01:
+        - desc: Shutdown tunnel on GW2
+          device: cisco-westus
           config_command: 
             - interface tunnel 12
             - shutdown
-        - desc: Connectivity East <-> West
-          device: tshoot-cisco-eastus
-          exec_command: ping 10.2.10.4 source Gi2 repeat 10
-          assert_value: "!!!"
-        - desc: Routes filter on South
-          device: tshoot-cisco-southcentralus
-          exec_command: show ip protocols
-          assert_values: 
-            - "Tunnel13 filtered by ACL_DL_TO_EAST"
-            - "Tunnel23 filtered by ACL_DL_TO_WEST"
+        - desc: GW1 has route to Region 2 network (A3.01.01.01)
+          device: cisco-eastus
+          exec_command: show ip route 10.2.10.0
           assert_not_values: 
-            - "ospf"
-            - "rip"
-            - "bgp"
-        - desc: ACL to East (South)
-          device: tshoot-cisco-southcentralus
-          exec_command: show access-lists ACL_DL_TO_EAST
-          assert_value: "deny   any"
-          assert_not: "permit any"
-        - desc: ACL to West (South)
-          device: tshoot-cisco-southcentralus
-          exec_command: show access-lists ACL_DL_TO_WEST
-          assert_value: "deny   any"
-          assert_not: "permit any"        
+            - "Subnet not in table"
+            - "via Tunnel12"
+        - desc: Connectivity test from Host 1 to Host 2 (A3.01.01.02)
+          device: ubuntu-eastus
+          exec_command: ping -c10 10.2.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
     cleanup_steps:
-      - desc: bring back tunnel 12 
-        device: tshoot-cisco-eastus
+      - desc: bring back tunnel on GW2 
+        device: cisco-westus
         config_command: 
           - interface tunnel 12
           - no shutdown
-  Testcase_C:
-    name: Failover scenario West-South
+
+  Testcase_A3_2:
+    name: A3 - Connectivity fault-tolerance (case 2)
     tests:
-      Ticket_03_West_South_Failover:
-        - desc: Shutdown tunnel23 (West <-> South)
-          device: tshoot-cisco-westus
+      Case_01:
+        - desc: Shutdown tunnel on GW3
+          device: cisco-southcentralus
           config_command: 
             - interface tunnel 23
             - shutdown
-        - desc: Connectivity West <-> South
-          device: tshoot-cisco-westus
-          exec_command: ping 10.3.10.4 source Gi2 repeat 10
-          assert_value: "!!!"
-        - desc: Routes filter on East
-          device: tshoot-cisco-eastus
-          exec_command: show ip protocols
-          assert_values: 
-            - "Tunnel12 filtered by ACL_DL_TO_WEST"
-            - "Tunnel13 filtered by ACL_DL_TO_SOUTH"
+        - desc: GW2 has route to Region 3 network (A3.02.01.01)
+          device: cisco-westus
+          exec_command: show ip route 10.3.10.0
           assert_not_values: 
-            - "ospf"
-            - "rip"
-            - "bgp"
-        - desc: ACL to West (East)
-          device: tshoot-cisco-eastus
-          exec_command: show access-lists ACL_DL_TO_WEST
-          assert_value: "deny   any"
-          assert_not: "permit any"
-        - desc: ACL to South (East)
-          device: tshoot-cisco-eastus
-          exec_command: show access-lists ACL_DL_TO_SOUTH
-          assert_value: "deny   any"
-          assert_not: "permit any"        
+            - "Subnet not in table"
+            - "via Tunnel23"
+        - desc: Connectivity test from Host 2 to Host 3 (A3.02.01.02)
+          device: ubuntu-westus
+          exec_command: ping -c10 10.3.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
     cleanup_steps:
-      - desc: bring back tunnel 23 
-        device: tshoot-cisco-westus
+      - desc: bring back tunnel on GW3
+        device: cisco-southcentralus
         config_command: 
           - interface tunnel 23
           - no shutdown
-  Testcase_D:
-    name: Failover scenario South-East
+
+  Testcase_A3_3:
+    name: A3 - Connectivity fault-tolerance (case 3)
     tests:
-      Ticket_03_South_East_Failover:
-        - desc: Shutdown tunnel13 (South <-> East)
-          device: tshoot-cisco-southcentralus
+      Case_01:
+        - desc: Shutdown tunnel on GW1
+          device: cisco-eastus
           config_command: 
             - interface tunnel 13
             - shutdown
-        - desc: Connectivity South <-> East
-          device: tshoot-cisco-southcentralus
-          exec_command: ping 10.1.10.4 source Gi2 repeat 10
-          assert_value: "!!!"
-        - desc: Routes filter on West
-          device: tshoot-cisco-westus
-          exec_command: show ip protocols
-          assert_values: 
-            - "Tunnel12 filtered by ACL_DL_TO_EAST"
-            - "Tunnel23 filtered by ACL_DL_TO_SOUTH"
+        - desc: GW3 has route to Region 1 network (A3.03.01.01)
+          device: cisco-southcentralus
+          exec_command: show ip route 10.1.10.0
           assert_not_values: 
-            - "ospf"
-            - "rip"
-            - "bgp"
-        - desc: ACL to East (West)
-          device: tshoot-cisco-westus
-          exec_command: show access-lists ACL_DL_TO_EAST
-          assert_value: "deny   any"
-          assert_not: "permit any"
-        - desc: ACL to South (West)
-          device: tshoot-cisco-westus
-          exec_command: show access-lists ACL_DL_TO_SOUTH
-          assert_value: "deny   any"
-          assert_not: "permit any"        
+            - "Subnet not in table"
+            - "via Tunnel13"
+        - desc: Connectivity test from Host 3 to Host 1 (A3.03.01.02)
+          device: ubuntu-southcentralus
+          exec_command: ping -c10 10.1.10.6 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
+          assert_value: "OK"
     cleanup_steps:
-      - desc: bring back tunnel 13 
-        device: tshoot-cisco-southcentralus
+      - desc: bring back tunnel on GW1
+        device: cisco-eastus
         config_command: 
           - interface tunnel 13
           - no shutdown
-  Testcase_E:
-    name: Linux
+
+  Testcase_A4:
+    name: A4 - Application availablity
     tests:
-      Ticket_04_Filesystem_security:
-        - desc: File shadow must be unreadable
-          device: ubuntu-eastus
-          exec_command: "cat /etc/shadow"          
-          assert_value: "Permission denied" 
-        - desc: File shadow must be readable by su
-          device: ubuntu-eastus
-          exec_command: "sudo cat /etc/shadow"
-          assert_value: "root:"
-        - desc: cat have right mod, owner and attr
-          device: ubuntu-eastus
-          exec_command: "ls -la /usr/bin/cat && lsattr /usr/bin/cat"
-          assert_not_values: 
-            - "-rws"
-            - "-i-"
-      Ticket_05_Web_redirect:
-        - desc: Check http redirect with correct code
+      Availability_test:
+        - desc: Check DNS records (A4.01.01.01)
           device: localhost
-          exec_command: curl -m 10 http://$PREFIX.az.skillscloud.company -v 2> >(grep Location) | grep Location
-          assert_values: 
-            - "Location: https://" 
-            - ".az.skillscloud.company/"
-      Ticket_05_Web_security:
-        - desc: Web page works fine
-          device: localhost
-          exec_command: curl -m 10 -k https://$PREFIX.az.skillscloud.company 2> /dev/null | grep portfolioModal3
-          assert_value: portfolioModal3
-        - desc: Check that ssl is turned on
-          device: localhost
-          exec_command: curl -m 10 https://$PREFIX.az.skillscloud.company
-          assert_not_values: 
-            - "error"
-            - "expired"
-            - "problem"
-      Ticket_06_Docker_app:
-        - desc: Check if application is working
-          device: localhost
-          exec_command: curl -m 10 https://westus.$PREFIX.az.skillscloud.company
-          assert_not_values: 
-            - "502 Bad Gateway"
-            - "Failed to connect"
-            - "Connection timed out"
-            - "error"
-            - "Could not resolve host"
-      Ticket_06_Docker_port_exposed:
-        - desc: Check that port exposed
-          device: ubuntu-westus
-          exec_command: "sudo cat /root/src/ts39-api/Dockerfile | grep EXPOSE"          
-          assert_value: "EXPOSE"
-    cleanup_steps:
-  Testcase_F:
-    name: Azure
-    tests:
-      Ticket_07_Public_DNS:
-        - desc: Check DNS record
-          device: localhost
-          exec_command: nslookup tm.$PREFIX.az.skillscloud.company $(dig ns $PREFIX.az.skillscloud.company +short | head -n1)
+          exec_command: nslookup app.$PREFIX.az.skillscloud.company $(dig ns $PREFIX.az.skillscloud.company +short | head -n1)
           assert_not_values:
             - "server can't find"
-            - "Address: 10.2.10.6"
-        - desc: Check website is available
+            - "Address: 10."
+        - desc: Application is reachable using HTTP (A4.01.01.02)
           device: localhost
-          exec_command: curl -m 10 https://tm.$PREFIX.az.skillscloud.company 2> /dev/null | grep InfluxDB
-          assert_value: InfluxDB
-      Ticket_08_SDN_Routing:
-        - desc: South route table has default route
+          exec_command: expr length + "$(curl -m 10 http://app.$PREFIX.az.skillscloud.company -vs 2>&1 | grep 'NSALAB\|Location')"
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: HTTP request is redirected to HTTPS (A4.01.01.03)
           device: localhost
-          exec_command: az network route-table route list -g rg-$PREFIX --route-table-name $PREFIX-rt-southcentralus
-          assert_values: 
-            - "\"addressPrefix\": \"0.0.0.0/0\""
-            - "\"nextHopIpAddress\": \"10.3.10.4\""
-            - "\"nextHopType\": \"VirtualAppliance\""
-        - desc: South client has access to internet
-          device: ubuntu-southcentralus
-          exec_command: ping -c2 google.com ; ping -c5 google.com 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
-          assert_value: "OK"
-      Ticket_09_Bastion_access:
-        - desc: Check Ubuntu South available over SSH
-          device: ubuntu-southcentralus
-          exec_command: ssh devuser@localhost -o StrictHostKeyChecking=no -o PasswordAuthentication=no -o UserKnownHostsFile=/dev/null whoami
-          assert_not: Permission denied
-        - desc: Check SSH allow config
-          device: ubuntu-southcentralus
-          exec_command: cat /etc/ssh/sshd_config.d/10-allow.conf
-          assert_value: devuser
+          exec_command: expr length + "$(curl -m 10 http://app.$PREFIX.az.skillscloud.company -vs 2>&1 | grep 'Location')"
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: App is reachable using HTTPS w/o cert validation (A4.01.01.04)
+          device: localhost
+          exec_command: expr length + "$(curl -m 10 -k https://app.$PREFIX.az.skillscloud.company -vs 2>&1 | grep 'NSALAB')"
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Certificate is valid (A4.01.01.05)
+          device: localhost
+          exec_command: expr length + "$(curl -m 10 https://app.$PREFIX.az.skillscloud.company -vs 2>&1 | grep 'NSALAB')"
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Application is able to process requests (A4.01.01.06)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+    cleanup_steps:
+
+  Testcase_A5_1:
+    name: A5 - Application fault-tolerance (DNS and internetwork)
+    tests:
+      Fault_tolerant_DNS:
+        - desc: Check DNS record set (A5.01.01.01)
+          device: localhost
+          exec_command: expr $(nslookup app.$PREFIX.az.skillscloud.company $(dig ns $PREFIX.az.skillscloud.company +short | head -n1) | grep Name | wc -l) \>= 3
+          assert: "1"
+      Fault_tolerant_network:
+        - desc: Shutdown first region
+          device: cisco-eastus
+          config_command: 
+            - interface gi2
+            - shutdown
+        - desc: Application is able to process requests (A5.01.02.01)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Shutdown second region
+          device: cisco-westus
+          config_command: 
+            - interface gi2
+            - shutdown
+        - desc: Application is able to process requests (A5.01.02.02)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+    cleanup_steps:
+        - desc: bring back first region
+          device: cisco-eastus
+          config_command: 
+            - interface gi2
+            - no shutdown
+        - desc: bring back second region
+          device: cisco-westus
+          config_command: 
+            - interface gi2
+            - no shutdown
+
+
+  Testcase_A5_2:
+    name: A5 - Application fault-tolerance (automatic restart and proxy)
+    tests:
+      Kill_request_01:
+        - desc: Sending KILL request to the application
+          device: localhost
+          exec_command: "curl --location --request GET https://app.$PREFIX.az.skillscloud.company/shutdown?code=1 --header \"Authorization: Bearer $(web-53 -t web53Secret | cut -c7-)\""
+        - desc: Application is able to process requests (A5.02.01.01)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Sending KILL request to the application
+          device: localhost
+          exec_command: "curl --location --request GET https://app.$PREFIX.az.skillscloud.company/shutdown?code=1 --header \"Authorization: Bearer $(web-53 -t web53Secret | cut -c7-)\""
+        - desc: Application is able to process requests (A5.02.01.02)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Sending KILL request to the application
+          device: localhost
+          exec_command: "curl --location --request GET https://app.$PREFIX.az.skillscloud.company/shutdown?code=1 --header \"Authorization: Bearer $(web-53 -t web53Secret | cut -c7-)\""
+        - desc: Application is able to process requests (A5.02.01.03)
+          device: localhost
+          exec_command: expr length + $(curl -m 10 https://app.$PREFIX.az.skillscloud.company/status -s 2>&1 | jq -r .Redis | grep true)
+          assert_not_values: 
+            - "0"
+            - "error"
+        - desc: Turning off health checks in all regions
+          device: localhost
+          exec_command: "for i in {1..3}; do curl -k --location --request POST https://app.$PREFIX.az.skillscloud.company/health  --header \"Authorization: Bearer $(web-53 -t web53Secret | cut -c7-)\" --header 'Content-Type: application/json' --data-raw '{\"Health\":false}'; sleep 10; done"
+          assert_not_values: 
+            - "error"
+        - desc: Health checks are implemented at proxy level (A5.02.01.04)
+          device: localhost
+          exec_command: "if [ $(curl -I -s -L https://app.$PREFIX.az.skillscloud.company/status | grep HTTP/2 | cut -d ' ' -f 2) -ge 500 ]; then echo 'true'; else echo 'false'; fi"
+          assert: "true"
+          assert_not_values: 
+            - "error"
     cleanup_steps:

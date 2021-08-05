@@ -1,0 +1,55 @@
+- desc: Check DNS records (A4.01.01.01)
+  device: dummy
+  action_chain:
+    - action: validate_dns_record
+      action_vars:
+        name: 'app.{dns-zone}'
+        record_type: A
+        is_private: False
+        min_records: 1
+- desc: Application is reachable using HTTP (A4.01.01.02)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'http://app.{dns-zone}'
+        assert_code: 200
+        assert_content: NSALAB
+- desc: HTTP request is redirected to HTTPS (A4.01.01.03)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'http://app.{dns-zone}'
+        assert_code: 200
+        assert_redirect: True
+        assert_content: NSALAB
+- desc: App is reachable using HTTPS w/o cert validation (A4.01.01.04)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}'
+        assert_code: 200
+        assert_cert: False
+        assert_content: NSALAB
+- desc: Certificate is valid (A4.01.01.05)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}'
+        assert_code: 200
+        assert_cert: True
+        assert_content: NSALAB
+- desc: Application is able to process requests (A4.01.01.06)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}/status'
+        assert_code: 200
+        assert_cert: True
+        assert_json:
+          - key: Redis
+            value: True

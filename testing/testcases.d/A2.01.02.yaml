@@ -1,0 +1,18 @@
+- desc: Gateway 2 has route to region 3 network (A2.01.02.01)
+  device: gw-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: show ip route {region-03-private-network}
+        tags_are_present: False
+        assert_tags:
+          - "Subnet not in table"
+- desc: Connectivity test from host 2 to host 3 (A2.01.02.02)
+  device: platform-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: ping -c5 {platform-03-ip} {linux-ping-parser}
+        tags_are_present: True
+        assert_tags:
+          - "OK"

@@ -1,0 +1,18 @@
+- desc: GW3 has route to Region 1 network (A3.03.01.01)
+  device: gw-region-03
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: show ip route {region-01-private-network}
+        tags_are_present: False
+        assert_tags:
+          - "Subnet not in table"
+- desc: Connectivity test from Host 3 to Host 1 (A3.03.01.02)
+  device: platform-region-03
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: ping -c10 {platform-01-ip} {linux-ping-parser}
+        tags_are_present: True
+        assert_tags:
+          - "OK"
