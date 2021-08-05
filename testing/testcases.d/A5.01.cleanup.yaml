@@ -1,0 +1,16 @@
+- desc: bring back first region
+  device: gw-region-01
+  action_chain:
+    - action: config
+      action_vars:
+        commands: 
+          - interface {region-01-inside-intf}
+          - no shutdown
+- desc: bring back second region
+  device: gw-region-02
+  action_chain:
+    - action: config
+      action_vars:
+        commands: 
+          - interface {region-02-inside-intf}
+          - no shutdown

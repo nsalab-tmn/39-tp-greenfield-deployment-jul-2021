@@ -1,0 +1,27 @@
+- desc: Host 2 can reach its default gateway (A1.01.02.01)
+  device: platform-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: ping -c5 {gw-02-private-ip} {linux-ping-parser}
+        tags_are_present: True
+        assert_tags:
+          - "OK"
+- desc: NAT is configured on gateway 2 (A1.01.02.02)
+  device: gw-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: show ip nat map
+        tags_are_present: True
+        assert_tags:
+          - "GigabitEthernet1 overload"  
+- desc: Host 2 can reach external host (A1.01.02.03)
+  device: platform-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: ping -c5 {external-host-ip} {linux-ping-parser}
+        tags_are_present: True
+        assert_tags:
+          - "OK"

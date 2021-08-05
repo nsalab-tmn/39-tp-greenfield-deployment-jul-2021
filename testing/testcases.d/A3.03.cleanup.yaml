@@ -1,0 +1,9 @@
+- desc: Bring back tunnel on GW1
+  device: gw-region-01
+  action_chain:
+    - action: config
+      action_vars:
+        commands: 
+          - interface {outgoing_interface}
+          - no shutdown
+          - do ping 127.0.0.1  ! sleep for 10 sec for convergence

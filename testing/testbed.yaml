@@ -1,89 +1,75 @@
 testbed:
-  name: ITNSA Skill Challenge TSHOOT
+  name: ITNSA Greenfield Deployment Test Project
   credentials:
     default:
-      username: '%ENV{DEFAULT_USER}'
-      password: '%ENV{DEFAULT_PASSWORD}'
+      username: '%ENV{adminuser}'
+      password: '%ENV{password}'
 
 devices:
-  localhost:
-    os: linux
-    type: linux
-    credentials:
-      default:
-        password: '%ENV{LOCAL_PASSWORD}'
-        username: '%ENV{LOCAL_USER}'
+  dummy:
     connections:
-      ssh:
-        protocol: ssh
+      a:
         ip: localhost
-        port: 22
-        ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
-        arguments:
-          connection_timeout: 15
-    custom:
-      rg: rg-comp-99
-      prefix: comp-99
-  cisco-eastus:
+  gw-region-01:
     os: ios
     type: router
     connections:
       ssh:
         protocol: ssh
-        ip: 1.1.1.1
+        ip: '%ENV{gw_01_public_ip}'
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
           connection_timeout: 15
-  cisco-westus:
+  gw-region-02:
     os: ios
     type: router
     connections:
       ssh:
         protocol: ssh
-        ip: 1.1.1.1
+        ip: '%ENV{gw_02_public_ip}'
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
           connection_timeout: 15
-  cisco-southcentralus:
+  gw-region-03:
     os: ios
     type: router
     connections:
       ssh:
         protocol: ssh
-        ip: 1.1.1.1
+        ip: '%ENV{gw_02_public_ip}'
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
           connection_timeout: 15
-  ubuntu-eastus:
+  platform-region-01:
     os: linux
     type: linux
     connections:
       ssh:
         protocol: ssh
-        ip: 10.1.10.6
-        proxy: cisco-eastus
+        ip: '%ENV{platform_01_ip}'
+        proxy: gw-region-01
         arguments:
           connection_timeout: 15
-  ubuntu-westus:
+  platform-region-02:
     os: linux
     type: linux
     connections:
       ssh:
         protocol: ssh
-        ip: 10.2.10.6
-        proxy: cisco-westus
+        ip: '%ENV{platform_02_ip}'
+        proxy: gw-region-02
         arguments:
           connection_timeout: 15
-  ubuntu-southcentralus:
+  platform-region-03:
     os: linux
     type: linux
     connections:
       ssh:
         protocol: ssh
-        ip: 10.3.10.6
-        proxy: cisco-southcentralus
+        ip: '%ENV{platform_03_ip}'
+        proxy: gw-region-03
         arguments:
           connection_timeout: 15
