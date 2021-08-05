@@ -9,7 +9,7 @@ import dns.resolver
 import ipaddress
 import httpx
 import json
-
+from time import sleep
 
 logger = logging.getLogger(__name__)
 
@@ -59,25 +59,40 @@ def process_steps(test_steps, testbed, steps, params):
 def validate_web_response(testbed, device, action_vars, params): 
     try:
         verify = 'assert_cert' in action_vars.keys() and action_vars['assert_cert']
-        client = httpx.Client(verify = verify)        
+        client = httpx.Client(verify = verify)             
+        query_params = httpx.QueryParams() 
+        method = 'GET'
+        content = None
         if 'query_params' in action_vars.keys():
-            qp = kv_to_dict_list(action_vars['query_params'], params)
-            for seq in range(len(qp)):
-                client.params = client.params.merge(qp[seq])
+            qp = kv_to_dict(action_vars['query_params'], params)
+            query_params = query_params.merge(qp)
+        if 'method' in action_vars.keys():
+            method = action_vars['method']
+        if 'content' in action_vars.keys():
+            content = action_vars['content']
+        
+        request = httpx.Request(method = method,
+            url = action_vars['name'].format_map(params),
+            content = content,
+            params = query_params)        
         if 'headers' in action_vars.keys():
-            h = kv_to_dict_list(action_vars['headers'], params)
-            for seq in range(len(h)):
-                client.headers.update(h[seq])
-        response = client.get(action_vars['name'].format_map(params))
+            h = kv_to_dict(action_vars['headers'], params)
+            request.headers.update(h)
+        
+        response = client.send(request)
+
         if 'assert_code' in action_vars.keys():
             assert response.status_code == action_vars['assert_code']
+        if 'assert_code_range' in action_vars.keys():
+            assert response.status_code >= action_vars['assert_code_range']['min']
+            assert response.status_code <= action_vars['assert_code_range']['max']
         if 'assert_redirect' in action_vars.keys() and action_vars['assert_redirect']:
             assert len(response.history) > 0
         if 'assert_content' in action_vars.keys():
             for content in action_vars['assert_content']:
-                assert content in response.content
+                assert content in response.text
         if 'assert_json' in action_vars.keys():
-            j = json.load(response)
+            j = response.json()
             for seq in range(len(action_vars['assert_json'])):
                 values = []
                 generator = item_generator(j, action_vars['assert_json'][seq]['key'])
@@ -85,14 +100,18 @@ def validate_web_response(testbed, device, action_vars, params):
                     values.append(v)
                 assert action_vars['assert_json'][seq]['value'] in values
     except Exception as e:
-        logger.info("Exception occured:" + e.args[0])
+        logger.info("Exception occured:" + str(e))
         aetest.steps.Step.failed('Validation failed. Expected: ' + str(action_vars))
 
-def kv_to_dict_list(kvdict, params): 
-    l = [] 
-    for seq in range(len(kvdict)): 
-        l.append({str(kvdict[seq]['key']).format_map(params): str(kvdict[seq]['value']).format_map(params)}) 
-    return l 
+def go_sleep(testbed, device, action_vars, params):
+    sleep(action_vars['seconds'])
+
+def kv_to_dict(kvdict, params): 
+    d = {}
+    for seq in kvdict: 
+        d[str(seq['key']).format_map(params)] = str(seq['value']).format_map(params) 
+        #append({str(kvdict[seq]['key']).format_map(params): str(kvdict[seq]['value']).format_map(params)}) 
+    return d 
 
 def item_generator(json_input, lookup_key):
     if isinstance(json_input, dict):
@@ -115,7 +134,7 @@ def validate_dns_record(testbed, device, action_vars, params):
         for seq in range(action_vars['min_records']):
             assert ipaddress.ip_address(str(answer.rrset[seq])).is_private == action_vars['is_private']
     except Exception as e:
-        logger.info("Exception occured:" + e.args[0])
+        logger.info("Exception occured:" + str(e))
         aetest.steps.Step.failed('Validation failed. Expected: ' + str(action_vars))
 
 def nslookup(domain):

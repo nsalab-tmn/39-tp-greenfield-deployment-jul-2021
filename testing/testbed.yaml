@@ -20,7 +20,7 @@ devices:
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
-          connection_timeout: 15
+          connection_timeout: 15          
   gw-region-02:
     os: ios
     type: router
@@ -31,18 +31,18 @@ devices:
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
-          connection_timeout: 15
+          connection_timeout: 15          
   gw-region-03:
     os: ios
     type: router
     connections:
       ssh:
         protocol: ssh
-        ip: '%ENV{gw_02_public_ip}'
+        ip: '%ENV{gw_03_public_ip}'
         port: 22
         ssh_options: -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null
         arguments:
-          connection_timeout: 15
+          connection_timeout: 15          
   platform-region-01:
     os: linux
     type: linux

@@ -1,0 +1,61 @@
+- desc: Health checks are implemented at proxy level (A5.02.01.04)
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}/health'
+        headers:
+          - key: Authorization
+            value: Bearer {web-53-auth}
+          - key: Content-Type
+            value: application/json
+        content: '{"Health":false}'
+        method: POST
+        assert_code: 202
+        assert_json:
+          - key: Message
+            value: Health status turned off by remote admin
+    - action: go_sleep
+      action_vars:
+        seconds: 10
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}/health'
+        headers:
+          - key: Authorization
+            value: Bearer {web-53-auth}
+          - key: Content-Type
+            value: application/json
+        content: '{"Health":false}'
+        method: POST
+        assert_code: 202
+        assert_json:
+          - key: Message
+            value: Health status turned off by remote admin
+    - action: go_sleep
+      action_vars:
+        seconds: 10
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}/health'
+        headers:
+          - key: Authorization
+            value: Bearer {web-53-auth}
+          - key: Content-Type
+            value: application/json
+        content: '{"Health":false}'
+        method: POST
+        assert_code: 202
+        assert_json:
+          - key: Message
+            value: Health status turned off by remote admin
+    - action: go_sleep
+      action_vars:
+        seconds: 10
+    - action: validate_web_response
+      action_vars:
+        name: 'https://app.{dns-zone}/status'
+        assert_code_range: 
+          min: 500
+          max: 599
+        assert_cert: True

@@ -46,16 +46,16 @@ def main(runtime):
         update_dict(params, tfd[prefix])
         setenv(params)
         tb = testbed.load('testbed.yaml') 
-        # tasks.append(Task(
-        #     testscript = './ut.py',
-        #     testbed=tb,
-        #     datafile=df,
-        #     runtime = runtime,
-        #     taskid = "Competitor {:02d}".format(seq + 1),
-        #     params = params))
-        # tasks[seq].start()
-        # tasks[seq].wait()
-        # seq += 1
+        tasks.append(Task(
+            testscript = './ut.py',
+            testbed=tb,
+            datafile=df,
+            runtime = runtime,
+            taskid = "Competitor {:02d}".format(seq + 1),
+            params = params))
+        tasks[seq].start()
+        tasks[seq].wait()
+        seq += 1
 
     # tb = testbed.load(os.path.join('./testbed.yaml'))
         

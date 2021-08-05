@@ -4,4 +4,4 @@ testing/.env
 .plan*
 .venv
 .terraform.lock.hcl
-.vscode
+*.pyc
