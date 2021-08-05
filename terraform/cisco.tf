@@ -1,6 +1,6 @@
 ##EASTUS============
-resource "azurerm_network_interface" "cisco-eastus" {
-  name                = "${var.prefix}-cisco-eastus"
+resource "azurerm_network_interface" "gw-region-01" {
+  name                = "gw-region-01"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -15,8 +15,8 @@ resource "azurerm_network_interface" "cisco-eastus" {
   enable_ip_forwarding = true
 }
 
-resource "azurerm_network_interface" "cisco-eastus-public" {
-  name                = "${var.prefix}-cisco-eastus-public"
+resource "azurerm_network_interface" "gw-region-01-public" {
+  name                = "gw-region-01-public"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -27,13 +27,13 @@ resource "azurerm_network_interface" "cisco-eastus-public" {
     private_ip_address_version    = "IPv4"
     primary                       = true
     private_ip_address            = "10.${var.region_octets[0]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
-    public_ip_address_id          = azurerm_public_ip.cisco-eastus.id
+    public_ip_address_id          = azurerm_public_ip.gw-region-01.id
   }
   enable_ip_forwarding = true
 }
 
-resource "azurerm_public_ip" "cisco-eastus" {
-  name                    = "${var.prefix}-cisco-eastus-public"
+resource "azurerm_public_ip" "gw-region-01" {
+  name                    = "gw-region-01-public"
   location                = azurerm_resource_group.main.location
   resource_group_name     = azurerm_resource_group.main.name
   sku                     = "Basic"
@@ -42,8 +42,8 @@ resource "azurerm_public_ip" "cisco-eastus" {
   idle_timeout_in_minutes = 4
 }
 
-# resource "azurerm_network_security_group" "cisco-eastus" {
-#   name                = "${var.prefix}-cisco-eastus-public"
+# resource "azurerm_network_security_group" "gw-region-01" {
+#   name                = "gw-region-01-public"
 #   location            = azurerm_resource_group.main.location
 #   resource_group_name = azurerm_resource_group.main.name
 #   security_rule {
@@ -58,14 +58,14 @@ resource "azurerm_public_ip" "cisco-eastus" {
 #     direction                  = "Inbound"
 #   }
 # }
-# resource "azurerm_network_interface_security_group_association" "cisco-eastus" {
-#   network_interface_id      = azurerm_network_interface.cisco-eastus-public.id
-#   network_security_group_id = azurerm_network_security_group.cisco-eastus.id
+# resource "azurerm_network_interface_security_group_association" "gw-region-01" {
+#   network_interface_id      = azurerm_network_interface.gw-region-01-public.id
+#   network_security_group_id = azurerm_network_security_group.gw-region-01.id
 # }
 
 
-resource "azurerm_linux_virtual_machine" "cisco-eastus" {
-  name                = "${var.prefix}-cisco-eastus"
+resource "azurerm_linux_virtual_machine" "gw-region-01" {
+  name                = "gw-region-01"
   resource_group_name = azurerm_resource_group.main.name
   location            = azurerm_resource_group.main.location
   plan {
@@ -81,17 +81,17 @@ resource "azurerm_linux_virtual_machine" "cisco-eastus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-cisco-eastus"
+  computer_name              = "gw-region-01"
   network_interface_ids = [
-    azurerm_network_interface.cisco-eastus-public.id,
-    azurerm_network_interface.cisco-eastus.id
+    azurerm_network_interface.gw-region-01-public.id,
+    azurerm_network_interface.gw-region-01.id
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 16
-    name                 = "${var.prefix}-cisco-eastus"
+    name                 = "gw-region-01"
   }
 
   source_image_reference {
@@ -100,13 +100,13 @@ resource "azurerm_linux_virtual_machine" "cisco-eastus" {
     sku       = "17_2_1-payg-sec"
     version   = "latest"
   }
-  #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-eastus.tpl", { westip = azurerm_public_ip.cisco-westus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,
-  priv_ubuntu=azurerm_network_interface.ubuntu-eastus.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0) })):null
+  #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-01.tpl", { westip = azurerm_public_ip.gw-region-02.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address }))
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-01.tpl", { westip = azurerm_public_ip.gw-region-02.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address,
+  priv_ubuntu=azurerm_network_interface.platform-region-01.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0) })):null
 }
 ##WESTUS============
-resource "azurerm_network_interface" "cisco-westus" {
-  name                = "${var.prefix}-cisco-westus"
+resource "azurerm_network_interface" "gw-region-02" {
+  name                = "gw-region-02"
   location            = "westus"
   resource_group_name = azurerm_resource_group.main.name
 
@@ -121,9 +121,9 @@ resource "azurerm_network_interface" "cisco-westus" {
   enable_ip_forwarding = true
 }
 
-resource "azurerm_network_interface" "cisco-westus-public" {
-  name                = "${var.prefix}-cisco-westus-public"
-  location            = azurerm_network_interface.cisco-westus.location
+resource "azurerm_network_interface" "gw-region-02-public" {
+  name                = "gw-region-02-public"
+  location            = azurerm_network_interface.gw-region-02.location
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
@@ -133,14 +133,14 @@ resource "azurerm_network_interface" "cisco-westus-public" {
     private_ip_address_version    = "IPv4"
     primary                       = true
     private_ip_address            = "10.${var.region_octets[1]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
-    public_ip_address_id          = azurerm_public_ip.cisco-westus.id
+    public_ip_address_id          = azurerm_public_ip.gw-region-02.id
   }
   enable_ip_forwarding = true
 }
 
-resource "azurerm_public_ip" "cisco-westus" {
-  name                    = "${var.prefix}-cisco-westus-public"
-  location                = azurerm_network_interface.cisco-westus.location
+resource "azurerm_public_ip" "gw-region-02" {
+  name                    = "gw-region-02-public"
+  location                = azurerm_network_interface.gw-region-02.location
   resource_group_name     = azurerm_resource_group.main.name
   sku                     = "Basic"
   allocation_method       = "Static"
@@ -148,8 +148,8 @@ resource "azurerm_public_ip" "cisco-westus" {
   idle_timeout_in_minutes = 4
 }
 
-# resource "azurerm_network_security_group" "cisco-westus" {
-#   name                = "${var.prefix}-cisco-westus-public"
+# resource "azurerm_network_security_group" "gw-region-02" {
+#   name                = "gw-region-02-public"
 #   location            = azurerm_resource_group.main.location
 #   resource_group_name = azurerm_resource_group.main.name
 #   security_rule {
@@ -164,16 +164,16 @@ resource "azurerm_public_ip" "cisco-westus" {
 #     direction                    = "Inbound"
 #   }
 # }
-# resource "azurerm_network_interface_security_group_association" "cisco-westus" {
-#   network_interface_id      = azurerm_network_interface.cisco-westus-public.id
-#   network_security_group_id = azurerm_network_security_group.cisco-westus.id
+# resource "azurerm_network_interface_security_group_association" "gw-region-02" {
+#   network_interface_id      = azurerm_network_interface.gw-region-02-public.id
+#   network_security_group_id = azurerm_network_security_group.gw-region-02.id
 # }
 
 
-resource "azurerm_linux_virtual_machine" "cisco-westus" {
-  name                = "${var.prefix}-cisco-westus"
+resource "azurerm_linux_virtual_machine" "gw-region-02" {
+  name                = "gw-region-02"
   resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_network_interface.cisco-westus.location
+  location            = azurerm_network_interface.gw-region-02.location
   plan {
     name      = "17_2_1-payg-sec"
     product   = "cisco-csr-1000v"
@@ -187,17 +187,17 @@ resource "azurerm_linux_virtual_machine" "cisco-westus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-cisco-westus"
+  computer_name              = "gw-region-02"
   network_interface_ids = [
-    azurerm_network_interface.cisco-westus-public.id,
-    azurerm_network_interface.cisco-westus.id
+    azurerm_network_interface.gw-region-02-public.id,
+    azurerm_network_interface.gw-region-02.id
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 16
-    name                 = "${var.prefix}-cisco-westus"
+    name                 = "gw-region-02"
   }
 
   source_image_reference {
@@ -206,13 +206,13 @@ resource "azurerm_linux_virtual_machine" "cisco-westus" {
     sku       = "17_2_1-payg-sec"
     version   = "latest"
   }
-  #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-westus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, southip = azurerm_public_ip.cisco-southcentralus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-westus.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
+  #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-02.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address }))
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-02.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address,   priv_ubuntu=azurerm_network_interface.platform-region-02.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
 }
 
 ##SOUTHCENTRALUS============
-resource "azurerm_network_interface" "cisco-southcentralus" {
-  name                = "${var.prefix}-cisco-southcentralus"
+resource "azurerm_network_interface" "gw-region-03" {
+  name                = "gw-region-03"
   location            = "southcentralus"
   resource_group_name = azurerm_resource_group.main.name
 
@@ -227,9 +227,9 @@ resource "azurerm_network_interface" "cisco-southcentralus" {
   enable_ip_forwarding = true
 }
 
-resource "azurerm_network_interface" "cisco-southcentralus-public" {
-  name                = "${var.prefix}-cisco-southcentralus-public"
-  location            = azurerm_network_interface.cisco-southcentralus.location
+resource "azurerm_network_interface" "gw-region-03-public" {
+  name                = "gw-region-03-public"
+  location            = azurerm_network_interface.gw-region-03.location
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
@@ -239,14 +239,14 @@ resource "azurerm_network_interface" "cisco-southcentralus-public" {
     private_ip_address_version    = "IPv4"
     primary                       = true
     private_ip_address            = "10.${var.region_octets[2]}.${var.subnet_octets[0]}.${var.host_octets[0]}"
-    public_ip_address_id          = azurerm_public_ip.cisco-southcentralus.id
+    public_ip_address_id          = azurerm_public_ip.gw-region-03.id
   }
   enable_ip_forwarding = true
 }
 
-resource "azurerm_public_ip" "cisco-southcentralus" {
-  name                    = "${var.prefix}-cisco-southcentralus-public"
-  location                = azurerm_network_interface.cisco-southcentralus.location
+resource "azurerm_public_ip" "gw-region-03" {
+  name                    = "gw-region-03-public"
+  location                = azurerm_network_interface.gw-region-03.location
   resource_group_name     = azurerm_resource_group.main.name
   sku                     = "Basic"
   allocation_method       = "Static"
@@ -254,8 +254,8 @@ resource "azurerm_public_ip" "cisco-southcentralus" {
   idle_timeout_in_minutes = 4
 }
 
-# resource "azurerm_network_security_group" "cisco-southcentralus" {
-#   name                = "${var.prefix}-cisco-southcentralus-public"
+# resource "azurerm_network_security_group" "gw-region-03" {
+#   name                = "gw-region-03-public"
 #   location            = azurerm_resource_group.main.location
 #   resource_group_name = azurerm_resource_group.main.name
 #   security_rule {
@@ -270,16 +270,16 @@ resource "azurerm_public_ip" "cisco-southcentralus" {
 #     direction                    = "Inbound"
 #   }
 # }
-# resource "azurerm_network_interface_security_group_association" "cisco-southcentralus" {
-#   network_interface_id      = azurerm_network_interface.cisco-southcentralus-public.id
-#   network_security_group_id = azurerm_network_security_group.cisco-southcentralus.id
+# resource "azurerm_network_interface_security_group_association" "gw-region-03" {
+#   network_interface_id      = azurerm_network_interface.gw-region-03-public.id
+#   network_security_group_id = azurerm_network_security_group.gw-region-03.id
 # }
 
 
-resource "azurerm_linux_virtual_machine" "cisco-southcentralus" {
-  name                = "${var.prefix}-cisco-southcentralus"
+resource "azurerm_linux_virtual_machine" "gw-region-03" {
+  name                = "gw-region-03"
   resource_group_name = azurerm_resource_group.main.name
-  location            = azurerm_network_interface.cisco-southcentralus.location
+  location            = azurerm_network_interface.gw-region-03.location
   plan {
     name      = "17_2_1-payg-sec"
     product   = "cisco-csr-1000v"
@@ -293,17 +293,17 @@ resource "azurerm_linux_virtual_machine" "cisco-southcentralus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-cisco-southcentralus"
+  computer_name              = "gw-region-03"
   network_interface_ids = [
-    azurerm_network_interface.cisco-southcentralus-public.id,
-    azurerm_network_interface.cisco-southcentralus.id
+    azurerm_network_interface.gw-region-03-public.id,
+    azurerm_network_interface.gw-region-03.id
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 16
-    name                 = "${var.prefix}-cisco-southcentralus"
+    name                 = "gw-region-03"
   }
 
   source_image_reference {
@@ -312,6 +312,6 @@ resource "azurerm_linux_virtual_machine" "cisco-southcentralus" {
     sku       = "17_2_1-payg-sec"
     version   = "latest"
   }
-  #custom_data = base64encode(templatefile("${path.module}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-cisco-southcentralus.tpl", { eastip = azurerm_public_ip.cisco-eastus.ip_address, westip = azurerm_public_ip.cisco-westus.ip_address,   priv_ubuntu=azurerm_network_interface.ubuntu-southcentralus.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
+  #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-03.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, westip = azurerm_public_ip.gw-region-02.ip_address }))
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-03.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, westip = azurerm_public_ip.gw-region-02.ip_address,   priv_ubuntu=azurerm_network_interface.platform-region-03.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
 }

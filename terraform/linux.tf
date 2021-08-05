@@ -1,6 +1,6 @@
 ##EASTUS============
-resource "azurerm_network_interface" "ubuntu-eastus" {
-  name                = "${var.prefix}-ubuntu-eastus"
+resource "azurerm_network_interface" "platform-region-01" {
+  name                = "platform-region-01"
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
 
@@ -14,9 +14,9 @@ resource "azurerm_network_interface" "ubuntu-eastus" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
-  depends_on                      = [azurerm_linux_virtual_machine.cisco-eastus]
-  name                            = "${var.prefix}-ubuntu-eastus"
+resource "azurerm_linux_virtual_machine" "platform-region-01" {
+  depends_on                      = [azurerm_linux_virtual_machine.gw-region-01]
+  name                            = "platform-region-01"
   resource_group_name             = azurerm_resource_group.main.name
   location                        = azurerm_resource_group.main.location
   size                            = "Standard_B2s"
@@ -27,16 +27,16 @@ resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-ubuntu-eastus"
+  computer_name              = "platform-region-01"
   network_interface_ids = [
-    azurerm_network_interface.ubuntu-eastus.id,
+    azurerm_network_interface.platform-region-01.id,
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 30
-    name                 = "${var.prefix}-ubuntu-eastus"
+    name                 = "platform-region-01"
   }
 
   source_image_reference {
@@ -45,15 +45,15 @@ resource "azurerm_linux_virtual_machine" "ubuntu-eastus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-eastus.tpl", {
-    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
-    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
-    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-platform-region-01.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.platform-region-01.private_ip_address,
+    platform_02_ip=azurerm_network_interface.platform-region-02.private_ip_address,
+    platform_03_ip=azurerm_network_interface.platform-region-03.private_ip_address})):null
 }
 
 ##WESTUS============
-resource "azurerm_network_interface" "ubuntu-westus" {
-  name                = "${var.prefix}-ubuntu-westus"
+resource "azurerm_network_interface" "platform-region-02" {
+  name                = "platform-region-02"
   location            = "westus"
   resource_group_name = azurerm_resource_group.main.name
 
@@ -67,11 +67,11 @@ resource "azurerm_network_interface" "ubuntu-westus" {
   }
 }
 
-resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
-  depends_on                      = [azurerm_linux_virtual_machine.cisco-westus]
-  name                            = "${var.prefix}-ubuntu-westus"
+resource "azurerm_linux_virtual_machine" "platform-region-02" {
+  depends_on                      = [azurerm_linux_virtual_machine.gw-region-02]
+  name                            = "platform-region-02"
   resource_group_name             = azurerm_resource_group.main.name
-  location                        = azurerm_network_interface.ubuntu-westus.location
+  location                        = azurerm_network_interface.platform-region-02.location
   size                            = "Standard_B2s"
   admin_username                  = var.adminuser
   admin_password                  = random_string.pass.result
@@ -80,16 +80,16 @@ resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-ubuntu-westus"
+  computer_name              = "platform-region-02"
   network_interface_ids = [
-    azurerm_network_interface.ubuntu-westus.id,
+    azurerm_network_interface.platform-region-02.id,
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 30
-    name                 = "${var.prefix}-ubuntu-westus"
+    name                 = "platform-region-02"
   }
 
   source_image_reference {
@@ -98,15 +98,15 @@ resource "azurerm_linux_virtual_machine" "ubuntu-westus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-westus.tpl", {
-    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
-    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
-    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-platform-region-02.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.platform-region-01.private_ip_address,
+    platform_02_ip=azurerm_network_interface.platform-region-02.private_ip_address,
+    platform_03_ip=azurerm_network_interface.platform-region-03.private_ip_address})):null
 }
 
 ##SOUTHCENTRALUS============
-resource "azurerm_network_interface" "ubuntu-southcentralus" {
-  name                = "${var.prefix}-ubuntu-southcentralus"
+resource "azurerm_network_interface" "platform-region-03" {
+  name                = "platform-region-03"
   location            = "southcentralus"
   resource_group_name = azurerm_resource_group.main.name
 
@@ -121,11 +121,11 @@ resource "azurerm_network_interface" "ubuntu-southcentralus" {
 }
 
 
-resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
-  depends_on                      = [azurerm_linux_virtual_machine.cisco-southcentralus]
-  name                            = "${var.prefix}-ubuntu-southcentralus"
+resource "azurerm_linux_virtual_machine" "platform-region-03" {
+  depends_on                      = [azurerm_linux_virtual_machine.gw-region-03]
+  name                            = "platform-region-03"
   resource_group_name             = azurerm_resource_group.main.name
-  location                        = azurerm_network_interface.ubuntu-southcentralus.location
+  location                        = azurerm_network_interface.platform-region-03.location
   size                            = "Standard_B2s"
   admin_username                  = var.adminuser
   admin_password                  = random_string.pass.result
@@ -134,16 +134,16 @@ resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
 
 
   allow_extension_operations = true
-  computer_name              = "${var.prefix}-ubuntu-southcentralus"
+  computer_name              = "platform-region-03"
   network_interface_ids = [
-    azurerm_network_interface.ubuntu-southcentralus.id,
+    azurerm_network_interface.platform-region-03.id,
   ]
 
   os_disk {
     caching              = "ReadWrite"
     storage_account_type = "StandardSSD_LRS"
     disk_size_gb         = 30
-    name                 = "${var.prefix}-ubuntu-southcentralus"
+    name                 = "platform-region-03"
   }
 
   source_image_reference {
@@ -152,8 +152,8 @@ resource "azurerm_linux_virtual_machine" "ubuntu-southcentralus" {
     sku       = "20_04-lts"
     version   = "latest"
   }
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-ubuntu-southcentralus.tpl", {
-    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.ubuntu-eastus.private_ip_address,
-    platform_02_ip=azurerm_network_interface.ubuntu-westus.private_ip_address,
-    platform_03_ip=azurerm_network_interface.ubuntu-southcentralus.private_ip_address})):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-platform-region-03.tpl", {
+    prefix="${var.competition_instance}-${var.prefix}",platform_01_ip=azurerm_network_interface.platform-region-01.private_ip_address,
+    platform_02_ip=azurerm_network_interface.platform-region-02.private_ip_address,
+    platform_03_ip=azurerm_network_interface.platform-region-03.private_ip_address})):null
 }

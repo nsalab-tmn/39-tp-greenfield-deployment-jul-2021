@@ -18,7 +18,7 @@ resource "azurerm_dns_a_record" "eastus" {
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
-  records             = [azurerm_public_ip.cisco-eastus.ip_address]
+  records             = [azurerm_public_ip.gw-region-01.ip_address]
 }
 
 resource "azurerm_dns_a_record" "westus" {
@@ -27,7 +27,7 @@ resource "azurerm_dns_a_record" "westus" {
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
-  records             = [azurerm_public_ip.cisco-westus.ip_address]
+  records             = [azurerm_public_ip.gw-region-02.ip_address]
 }
 
 resource "azurerm_dns_a_record" "southcentralus" {
@@ -36,7 +36,7 @@ resource "azurerm_dns_a_record" "southcentralus" {
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
-  records             = [azurerm_public_ip.cisco-southcentralus.ip_address]
+  records             = [azurerm_public_ip.gw-region-03.ip_address]
 }
 
 resource "azurerm_dns_a_record" "app" {
@@ -45,5 +45,5 @@ resource "azurerm_dns_a_record" "app" {
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
-  records             = [azurerm_public_ip.cisco-eastus.ip_address,azurerm_public_ip.cisco-westus.ip_address, azurerm_public_ip.cisco-southcentralus.ip_address]
+  records             = [azurerm_public_ip.gw-region-01.ip_address,azurerm_public_ip.gw-region-02.ip_address, azurerm_public_ip.gw-region-03.ip_address]
 }
