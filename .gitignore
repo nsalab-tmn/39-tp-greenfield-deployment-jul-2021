@@ -5,3 +5,4 @@ testing/.env
 .venv
 .terraform.lock.hcl
 *.pyc
+testing/__pycache__

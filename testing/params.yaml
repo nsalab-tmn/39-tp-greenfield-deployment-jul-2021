@@ -1,3 +1,4 @@
+---
 external-host-ip: 1.1.1.1
 web-53-auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2MjgyMTk5NTQsIm5iZiI6MTYyODE4Mzk1NCwic3ViIjoiYWRtaW4ifQ.rzaQWyThCcn7_TVKPy10-y89wtjGB1zg234wRor6BDI'
 linux-ping-parser: 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
