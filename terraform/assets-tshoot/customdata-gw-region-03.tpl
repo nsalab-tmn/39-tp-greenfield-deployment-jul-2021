@@ -1,6 +1,6 @@
 enable secret 9 $9$8FLFJuoXtuIDg.$NZvwCF9avCuCykWSaMXJXDJ5XN7sN.6ijOMravwNXlE
 !
-aaa new-model
+aaa new-model4@CBq6qGWbMCscwK
 !
 !
 aaa authentication login default local
@@ -51,10 +51,10 @@ banner motd c___ ___       __                               __
  |::.|   |::.. . |::.|:. |::.. . |::.|:. |::.. .  /                                                            
  `--- ---`-------`--- ---`-------`--- ---`-------'                                                             c
 
-crypto isakmp policy 10 ! <- ISAKMP policy is broken here
+crypto isakmp policy 10 
  encryption aes
  hash md5
- authentication pre-share
+ !authentication pre-share ! <- ISAKMP policy is broken here
  group 5
 crypto isakmp key cisco123 address 0.0.0.0
 !
