@@ -42,7 +42,7 @@ resource "random_shuffle" "host_octet" {
 
 module "competion" {
     source = "./terraform"
-    count = 1
+    count = 2
     prefix = format("comp-%02d", count.index+1)
     deploy_routes = true
     deploy_dns_a_records = true
