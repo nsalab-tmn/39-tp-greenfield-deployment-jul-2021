@@ -101,8 +101,12 @@ resource "azurerm_linux_virtual_machine" "gw-region-01" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-01.tpl", { westip = azurerm_public_ip.gw-region-02.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-01.tpl", { westip = azurerm_public_ip.gw-region-02.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address,
-  priv_ubuntu=azurerm_network_interface.platform-region-01.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0) })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-01.tpl", { 
+    westip = azurerm_public_ip.gw-region-02.ip_address, 
+    southip = azurerm_public_ip.gw-region-03.ip_address,
+    priv_ubuntu=azurerm_network_interface.platform-region-01.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0),
+    adminuser=var.adminuser,
+    password=random_string.pass.result })):null
 }
 ##WESTUS============
 resource "azurerm_network_interface" "gw-region-02" {
@@ -207,7 +211,13 @@ resource "azurerm_linux_virtual_machine" "gw-region-02" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-02.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-02.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, southip = azurerm_public_ip.gw-region-03.ip_address,   priv_ubuntu=azurerm_network_interface.platform-region-02.private_ip_address, priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0) })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-02.tpl", { 
+    eastip = azurerm_public_ip.gw-region-01.ip_address, 
+    southip = azurerm_public_ip.gw-region-03.ip_address,   
+    priv_ubuntu=azurerm_network_interface.platform-region-02.private_ip_address, 
+    priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0),
+    adminuser=var.adminuser,
+    password=random_string.pass.result })):null
 }
 
 ##SOUTHCENTRALUS============
@@ -313,5 +323,11 @@ resource "azurerm_linux_virtual_machine" "gw-region-03" {
     version   = "latest"
   }
   #custom_data = base64encode(templatefile("${path.module}/customdata-gw-region-03.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, westip = azurerm_public_ip.gw-region-02.ip_address }))
-  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-03.tpl", { eastip = azurerm_public_ip.gw-region-01.ip_address, westip = azurerm_public_ip.gw-region-02.ip_address,   priv_ubuntu=azurerm_network_interface.platform-region-03.private_ip_address, priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0) })):null
+  custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-03.tpl", { 
+    eastip = azurerm_public_ip.gw-region-01.ip_address, 
+    westip = azurerm_public_ip.gw-region-02.ip_address,   
+    priv_ubuntu=azurerm_network_interface.platform-region-03.private_ip_address, 
+    priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0),
+    adminuser=var.adminuser,
+    password=random_string.pass.result })):null
 }

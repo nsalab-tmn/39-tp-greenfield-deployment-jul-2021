@@ -10,7 +10,7 @@ aaa authorization exec default local none
 !
 ip domain name skillscloud.company
 
-username {adminuser} privilege 15 view operator secret {password}
+username ${adminuser} privilege 15 view operator secret ${password}
 username superadmin privilege 15 secret 9 $9$X5rZGldee5ub4U$obsPWWvVo6KdhfbmFjtgw03FGcYSH/9P3PUxFL69PIc
 
 parser view operator inclusive

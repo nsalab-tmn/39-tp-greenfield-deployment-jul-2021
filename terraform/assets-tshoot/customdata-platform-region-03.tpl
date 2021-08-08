@@ -12,6 +12,7 @@ cat <<EOF >Dockerfile
 FROM alpine
 WORKDIR /opt
 ADD web-53 config.yaml ./
+EXPOSE 8080
 ENTRYPOINT ./web-53
 EOF
 wget https://test-web53.s3.eu-central-1.amazonaws.com/web-53
@@ -24,10 +25,6 @@ AWS:
 Server:
   Host: 0.0.0.0
   Port: 8080
-DynamoDB:
-  Region: eu-central-1
-  TableName: test-web-53
-  PrimaryPartitionKey: recordId
 Redis:
   Host: redis-53
   Port: 6379
@@ -36,9 +33,7 @@ EOF
 docker build . -t web-53
 docker network create --driver bridge web53-net
 docker run --restart=always -d --name=web-53 --network=web53-net  \
-    -v "$(pwd)/config.yaml:/opt/config.yaml" web-53
-        
-docker run --restart=always -d --name=redis-53 --network=web53-net redis
+    -v "$(pwd)/config.yaml:/opt/config.yaml" -p 8080:8080 web-53
 
 cat <<EOF > supercert.pem
 -----BEGIN CERTIFICATE-----
@@ -287,4 +282,4 @@ http:
           timeout: "2s"
 EOF
 
-docker run -d  -v "$(pwd)/traefik.yml:/etc/traefik/traefik.yml" -v /var/run/docker.sock:/var/run/docker.sock  -v $(pwd)/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml -v $(pwd)/supercert.pem:/etc/traefik/supercert.pem -v $(pwd)/supercert.key:/etc/traefik/supercert.key --name traefik --network=web53-net traefik:v2.4
+docker run -d -p 80:80 -p 443:443 -p 5000:8080  -v "$(pwd)/traefik.yml:/etc/traefik/traefik.yml" -v /var/run/docker.sock:/var/run/docker.sock  -v $(pwd)/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml -v $(pwd)/supercert.pem:/etc/traefik/supercert.pem -v $(pwd)/supercert.key:/etc/traefik/supercert.key --name traefik --network=web53-net traefik:v2.4

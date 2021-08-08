@@ -24,10 +24,6 @@ AWS:
 Server:
   Host: 0.0.0.0
   Port: 8080
-DynamoDB:
-  Region: eu-central-1
-  TableName: test-web-53
-  PrimaryPartitionKey: recordId
 Redis:
   Host: redis-53
   Port: 6379
