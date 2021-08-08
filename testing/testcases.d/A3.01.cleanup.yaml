@@ -6,4 +6,6 @@
         commands: 
           - interface {outgoing_interface}
           - no shutdown
-          - do ping 127.0.0.1  ! sleep for 10 sec for convergence 
+    - action: go_sleep
+      action_vars:
+        seconds: '{default-sleep-timer}'

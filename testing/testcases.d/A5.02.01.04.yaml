@@ -3,12 +3,14 @@
   action_chain:
     - action: validate_web_response
       action_vars:
-        name: 'https://app.{dns-zone}/health'
+        name: 'https://{gw-01-public-ip}/health'
         headers:
           - key: Authorization
             value: Bearer {web-53-auth}
           - key: Content-Type
             value: application/json
+          - key: Host
+            value: app.{dns-zone}
         content: '{"Health":false}'
         method: POST
         assert_code: 202
@@ -17,15 +19,17 @@
             value: Health status turned off by remote admin
     - action: go_sleep
       action_vars:
-        seconds: 10
+        seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
-        name: 'https://app.{dns-zone}/health'
+        name: 'https://{gw-02-public-ip}/health'
         headers:
           - key: Authorization
             value: Bearer {web-53-auth}
           - key: Content-Type
             value: application/json
+          - key: Host
+            value: app.{dns-zone}
         content: '{"Health":false}'
         method: POST
         assert_code: 202
@@ -34,15 +38,17 @@
             value: Health status turned off by remote admin
     - action: go_sleep
       action_vars:
-        seconds: 10
+        seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
-        name: 'https://app.{dns-zone}/health'
+        name: 'https://{gw-03-public-ip}/health'
         headers:
           - key: Authorization
             value: Bearer {web-53-auth}
           - key: Content-Type
             value: application/json
+          - key: Host
+            value: app.{dns-zone}
         content: '{"Health":false}'
         method: POST
         assert_code: 202
@@ -51,7 +57,7 @@
             value: Health status turned off by remote admin
     - action: go_sleep
       action_vars:
-        seconds: 10
+        seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
         name: 'https://app.{dns-zone}/status'

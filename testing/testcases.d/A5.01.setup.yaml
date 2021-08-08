@@ -1,0 +1,14 @@
+- desc: find interface for region-01 private net
+  device: gw-region-01
+  action_chain:
+    - action: find_interface
+      action_vars:
+        network: '{region-01-private-network}'
+        param: region-01-inside-intf
+- desc: find interface for region-02 private net
+  device: gw-region-02
+  action_chain:
+    - action: find_interface
+      action_vars:
+        network: '{region-02-private-network}'
+        param: region-02-inside-intf

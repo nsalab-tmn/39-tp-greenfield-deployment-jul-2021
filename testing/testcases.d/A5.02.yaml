@@ -14,6 +14,9 @@
         assert_json:
           - key: Message
             value: Web53 server will be exited soon with exitCode=1
+    - action: go_sleep
+      action_vars:
+        seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
         name: 'https://app.{dns-zone}/status'

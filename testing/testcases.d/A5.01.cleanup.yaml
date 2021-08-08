@@ -14,3 +14,6 @@
         commands: 
           - interface {region-02-inside-intf}
           - no shutdown
+    - action: go_sleep
+      action_vars:
+        seconds: '{default-sleep-timer}'

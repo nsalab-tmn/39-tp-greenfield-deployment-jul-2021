@@ -1,11 +1,11 @@
 {
-    "gw-01-private-ip": "10.158.45.50",
-    "gw-02-private-ip": "10.111.45.50",
-    "gw-03-private-ip": "10.206.45.50",
-    "platform-01-ip": "10.158.45.85",
-    "platform-02-ip": "10.111.45.85",
-    "platform-03-ip": "10.206.45.85",
-    "region-01-private-network": "10.158.45.0",
-    "region-02-private-network": "10.111.45.0",
-    "region-03-private-network": "10.206.45.0"
+    "gw-01-private-ip": "10.220.186.178",
+    "gw-02-private-ip": "10.44.186.178",
+    "gw-03-private-ip": "10.244.186.178",
+    "platform-01-ip": "10.220.186.101",
+    "platform-02-ip": "10.44.186.101",
+    "platform-03-ip": "10.244.186.101",
+    "region-01-private-network": "10.220.186.0",
+    "region-02-private-network": "10.44.186.0",
+    "region-03-private-network": "10.244.186.0"
   }

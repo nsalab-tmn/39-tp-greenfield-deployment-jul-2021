@@ -104,8 +104,8 @@ def validate_web_response(testbed, device, action_vars, params):
         aetest.steps.Step.failed('Validation failed. Expected: ' + str(action_vars))
 
 def go_sleep(testbed, device, action_vars, params):
-    logger.info("Going to sleep for " + str(action_vars['seconds']) + " seconds")
-    sleep(action_vars['seconds'])
+    logger.info("Going to sleep for " + str(action_vars['seconds'].format_map(params)) + " seconds")
+    sleep(int(action_vars['seconds'].format_map(params)))
 
 def kv_to_dict(kvdict, params): 
     d = {}
@@ -192,7 +192,7 @@ def assert_tags(reference_tags, output, present):
     return True
 
 #testcase classes which will take data from datafile
-class Testcase_A1(aetest.Testcase):
+class Testcase_B4_1(aetest.Testcase):
     
     @aetest.setup
     def setup(self, testbed, steps, params):
@@ -209,28 +209,18 @@ class Testcase_A1(aetest.Testcase):
     def cleanup(self, testbed, steps, params):
         if self.cleanup_steps is not None:
             process_steps(test_steps = self.cleanup_steps, testbed = testbed, steps=steps, params=params)
-        
-class Testcase_A2(Testcase_A1):
+            
+class Testcase_B4_2(Testcase_B4_1):
     pass
 
-class Testcase_A3_1(Testcase_A1):
+class Testcase_B4_3(Testcase_B4_1):
     pass
 
-class Testcase_A3_2(Testcase_A1):
+class Testcase_B5_1(Testcase_B4_1):
     pass
 
-class Testcase_A3_3(Testcase_A1):
+class Testcase_B5_2(Testcase_B4_1):
     pass
-
-class Testcase_A4(Testcase_A1):
-    pass
-
-class Testcase_A5_1(Testcase_A1):
-    pass
-
-class Testcase_A5_2(Testcase_A1):
-    pass
-
 
 # main()
 if __name__ == '__main__':

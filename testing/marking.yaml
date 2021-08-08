@@ -41,9 +41,10 @@ testcases:
     cleanup_steps:
   Testcase_A5_1:
     name: A5 - Application fault-tolerance (DNS and internetwork)
-    setup_steps:
+    setup_steps: !include A5.01.setup.yaml
     tests:
-      Availability_test: !include A5.01.yaml
+      DNS_FT: !include A5.01.01.yaml
+      Internetwork_FT: !include A5.01.02.yaml
     cleanup_steps: !include A5.01.cleanup.yaml
   Testcase_A5_2:
     name: A5 - Application fault-tolerance (internetwork)

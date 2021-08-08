@@ -3,10 +3,10 @@
       "ad-username": "gfd-39-comp-01@nsalab.org",
       "adminuser": "azadmin",
       "dns-zone": "gfd-39-comp-01.az.skillscloud.company",
-      "gw-01-public-ip": "40.88.3.66",
-      "gw-02-public-ip": "104.42.113.179",
-      "gw-03-public-ip": "23.101.179.55",
-      "password": "4@CBq6qGWbMCscwK",
+      "gw-01-public-ip": "20.106.137.54",
+      "gw-02-public-ip": "40.78.67.73",
+      "gw-03-public-ip": "70.37.95.20",
+      "password": "=grp8Zy108TC1Wcx",
       "prefix": "gfd-39-comp-01"
     }
   }

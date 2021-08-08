@@ -1,0 +1,34 @@
+testcases:
+  Testcase_B4_1:
+    name: B4 - Connectivity fault-tolerance (case 1)
+    setup_steps: !include A3.01.setup.yaml
+    tests:
+      Case_01: !include A3.01.yaml
+    cleanup_steps: !include A3.01.cleanup.yaml
+  Testcase_B4_2:
+    name: B4 - Connectivity fault-tolerance (case 2)
+    setup_steps: !include A3.02.setup.yaml
+    tests:
+      Case_02: !include A3.02.yaml
+    cleanup_steps: !include A3.02.cleanup.yaml
+  Testcase_B4_3:
+    name: B4 - Connectivity fault-tolerance (case 3)
+    setup_steps: !include A3.03.setup.yaml
+    tests:
+      Case_03: !include A3.03.yaml
+    cleanup_steps: !include A3.03.cleanup.yaml
+  Testcase_B5_1:
+    name: B5 - Application fault-tolerance (DNS and internetwork)
+    setup_steps: !include A5.01.setup.yaml
+    tests:
+      Internetwork_FT: !include A5.01.02.yaml
+    cleanup_steps: !include A5.01.cleanup.yaml
+  Testcase_B5_2:
+    name: B5 - Application fault-tolerance (Respawn and reverse proxy)
+    setup_steps: 
+    tests:
+      Respawn_test_01: !include A5.02.yaml
+      Respawn_test_02: !include A5.02.yaml
+      Respawn_test_03: !include A5.02.yaml
+      Reverse_proxy_test: !include A5.02.01.04.yaml
+    cleanup_steps: 

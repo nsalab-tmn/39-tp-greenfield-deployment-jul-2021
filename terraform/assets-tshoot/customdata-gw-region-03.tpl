@@ -1,6 +1,6 @@
 enable secret 9 $9$8FLFJuoXtuIDg.$NZvwCF9avCuCykWSaMXJXDJ5XN7sN.6ijOMravwNXlE
 !
-aaa new-model4@CBq6qGWbMCscwK
+aaa new-model
 !
 !
 aaa authentication login default local
@@ -10,12 +10,11 @@ aaa authorization exec default local none
 !
 ip domain name skillscloud.company
 
-username {adminuser} privilege 15 view admin secret {password}
+username {adminuser} privilege 15 view operator secret {password}
 username superadmin privilege 15 secret 9 $9$X5rZGldee5ub4U$obsPWWvVo6KdhfbmFjtgw03FGcYSH/9P3PUxFL69PIc
 
-parser view admin inclusive
+parser view operator inclusive
  secret 9 $9$bQL1/3ivTsbcuE$3ia.lc5FnKSnnnp6C.VrL6MjzMkGicRwyl2Dsybmb3g
- commands configure exclude all line
  commands configure exclude all parser
  commands configure exclude all username
  commands exec exclude copy
