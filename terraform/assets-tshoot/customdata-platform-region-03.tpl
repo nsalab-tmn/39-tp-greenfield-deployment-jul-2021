@@ -287,4 +287,4 @@ http:
           timeout: "2s"
 EOF
 
-docker run -d -p 80:80 -p 443:443 -p 5000:8080  -v "$(pwd)/traefik.yml:/etc/traefik/traefik.yml" -v /var/run/docker.sock:/var/run/docker.sock  -v $(pwd)/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml -v $(pwd)/supercert.pem:/etc/traefik/supercert.pem -v $(pwd)/supercert.key:/etc/traefik/supercert.key --name traefik --network=web53-net traefik:v2.4
+docker run -d  -v "$(pwd)/traefik.yml:/etc/traefik/traefik.yml" -v /var/run/docker.sock:/var/run/docker.sock  -v $(pwd)/dynamic_conf.yml:/etc/traefik/dynamic_conf.yml -v $(pwd)/supercert.pem:/etc/traefik/supercert.pem -v $(pwd)/supercert.key:/etc/traefik/supercert.key --name traefik --network=web53-net traefik:v2.4

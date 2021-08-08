@@ -32,7 +32,7 @@ resource "azurerm_route_table" "rt-eastus" {
   location            = azurerm_resource_group.main.location
   resource_group_name = azurerm_resource_group.main.name
   dynamic "route" {
-    for_each = var.deploy_routes && !var.delete_eastus_default_route ? toset([1]) : toset([])
+    for_each = (var.deploy_routes && var.eastus_default_route) ? toset([1]) : toset([])
     content {
           name                   = "${var.prefix}-rt-eastus"
           address_prefix         = "0.0.0.0/0"

@@ -47,8 +47,8 @@ variable "assets_path" {
   description = "The assets path for custom data. It works only if deploy_custom_data variable is set."
 }
 
-variable "delete_eastus_default_route" {
-  default = false
+variable "eastus_default_route" {
+  default = true
   type = bool
   description = "Set this variable only when finished custom_data deployment"
 

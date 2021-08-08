@@ -42,13 +42,13 @@ resource "random_shuffle" "host_octet" {
 
 module "competion" {
     source = "./terraform"
-    count = 2
+    count = 1
     prefix = format("comp-%02d", count.index+1)
     deploy_routes = true
     deploy_dns_a_records = true
     deploy_custom_data = true
-    # assets_path = "assets-tshoot"
-    # delete_eastus_default_route = true
+    assets_path = "assets-tshoot"
+    eastus_default_route = false
     competition_instance = "gfd-39"
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result
