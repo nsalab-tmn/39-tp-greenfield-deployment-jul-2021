@@ -25,7 +25,7 @@ parser view admin inclusive
  commands exec exclude show configuration
  commands exec include show
 
-banner motd c___ ___       __                               __                                                            
+banner motd c ___ ___       __                               __                                                            
  |   Y   .-----|  .----.-----.--------.-----.   |  |_.-----.                                                   
  |.  |   |  -__|  |  __|  _  |        |  -__|   |   _|  _  |                                                   
  |. / \  |_____|__|____|_____|__|__|__|_____|   |____|_____|                                                   
