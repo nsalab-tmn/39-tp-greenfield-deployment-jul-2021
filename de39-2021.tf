@@ -47,8 +47,8 @@ module "competion" {
     deploy_routes = true
     deploy_dns_a_records = true
     deploy_custom_data = true
-    assets_path = "assets-tshoot"
-    eastus_default_route = false
+    assets_path = "assets"
+    region-01_default_route = true
     competition_instance = "gfd-39"
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result

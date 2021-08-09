@@ -12,27 +12,27 @@ resource "azurerm_dns_ns_record" "parrent_record" {
   records = azurerm_dns_zone.comp-hz.name_servers
 }
 
-resource "azurerm_dns_a_record" "eastus" {
+resource "azurerm_dns_a_record" "region-01" {
   count = var.deploy_dns_a_records ? 1 : 0
-  name                = "eastus"
+  name                = "region-01"
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
   records             = [azurerm_public_ip.gw-region-01.ip_address]
 }
 
-resource "azurerm_dns_a_record" "westus" {
+resource "azurerm_dns_a_record" "region-02" {
   count = var.deploy_dns_a_records ? 1 : 0
-  name                = "westus"
+  name                = "region-02"
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300
   records             = [azurerm_public_ip.gw-region-02.ip_address]
 }
 
-resource "azurerm_dns_a_record" "southcentralus" {
+resource "azurerm_dns_a_record" "region-03" {
   count = var.deploy_dns_a_records ? 1 : 0
-  name                = "southcentralus"
+  name                = "region-03"
   zone_name           = azurerm_dns_zone.comp-hz.name
   resource_group_name = azurerm_resource_group.main.name
   ttl                 = 300

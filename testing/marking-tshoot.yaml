@@ -31,4 +31,4 @@ testcases:
       Respawn_test_02: !include A5.02.yaml
       Respawn_test_03: !include A5.02.yaml
       Reverse_proxy_test: !include A5.02.01.04.yaml
-    cleanup_steps: 
+    cleanup_steps: !include A5.02.cleanup.yaml

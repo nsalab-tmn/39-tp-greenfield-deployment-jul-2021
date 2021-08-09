@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",  
             "args": [
-                "run", "job", "marking_job.py", "--marking-file", "marking-tshoot.yaml", "--unit-test", "ut-tshoot.py"
+                "run", "job", "marking_job.py"
             ],    
             "envFile": ".env",      
             "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",

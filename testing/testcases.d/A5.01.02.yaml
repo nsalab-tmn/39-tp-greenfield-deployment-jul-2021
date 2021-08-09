@@ -11,12 +11,9 @@
         seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
-        name: 'https://{gw-02-public-ip}/status'
-        headers:
-          - key: Host
-            value: app.{dns-zone}
+        name: 'https://app.{dns-zone}/status'
         assert_code: 200
-        assert_cert: False
+        assert_cert: True
         assert_json:
           - key: Redis
             value: True
@@ -33,12 +30,9 @@
         seconds: '{default-sleep-timer}'
     - action: validate_web_response
       action_vars:
-        name: 'https://{gw-03-public-ip}/status'
-        headers:
-          - key: Host
-            value: app.{dns-zone}
+        name: 'https://app.{dns-zone}/status'
         assert_code: 200
-        assert_cert: False
+        assert_cert: True
         assert_json:
           - key: Redis
             value: True
