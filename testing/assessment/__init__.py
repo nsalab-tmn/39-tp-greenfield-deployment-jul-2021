@@ -2,8 +2,10 @@ from pyats import aetest
 import dns.resolver 
 import ipaddress
 import httpx
+import os
 from time import sleep
 import logging
+import collections.abc
 logger = logging.getLogger(__name__)
 
 def validate_web_response(testbed, device, action_vars, params): 
@@ -19,7 +21,9 @@ def validate_web_response(testbed, device, action_vars, params):
         if 'method' in action_vars.keys():
             method = action_vars['method']
         if 'content' in action_vars.keys():
-            content = action_vars['content']
+            c = kv_to_dict(action_vars['content'], params)
+            content = str(c).replace('\'','"')
+            #content = action_vars['content'].format_map(params)
         
         request = httpx.Request(method = method,
             url = action_vars['name'].format_map(params),
@@ -31,6 +35,9 @@ def validate_web_response(testbed, device, action_vars, params):
         
         response = client.send(request)
 
+        if 'set_params' in action_vars.keys() and action_vars['set_params']:
+            if len(response.json().keys()) > 0:
+                update_dict(params, response.json())
         if 'assert_code' in action_vars.keys():
             assert response.status_code == action_vars['assert_code']
         if 'assert_code_range' in action_vars.keys():
@@ -44,14 +51,58 @@ def validate_web_response(testbed, device, action_vars, params):
         if 'assert_json' in action_vars.keys():
             j = response.json()
             for seq in range(len(action_vars['assert_json'])):
-                values = []
-                generator = item_generator(j, action_vars['assert_json'][seq]['key'])
-                for v in generator:
-                    values.append(v)
+                values = get_all_values(j, action_vars['assert_json'][seq]['key'])
+                # generator = item_generator(j, action_vars['assert_json'][seq]['key'])
+                # for v in generator:
+                #     values.append(v)
                 assert action_vars['assert_json'][seq]['value'] in values
+        if 'assert_json_answer' in action_vars.keys():
+            j = response.json()
+            case = False
+            to_str = True
+            for seq in range(len(action_vars['assert_json_answer'])):
+                key = action_vars['assert_json_answer'][seq]['key']
+                answer = get_first_value(j, key)
+                correct_answer = action_vars['assert_json_answer'][seq]['value']
+                if 'to_str' in action_vars['assert_json_answer'][seq].keys():
+                    to_str = action_vars['assert_json_answer'][seq]['to_str']
+                    if 'case' in action_vars['assert_json_answer'][seq].keys():
+                        case = action_vars['assert_json_answer'][seq]['case']
+                if to_str:
+                    answer = str(answer)
+                    correct_answer = str(correct_answer)
+                    if not case:
+                        answer = answer.lower()
+                        correct_answer = correct_answer.lower()
+                assert correct_answer in answer
     except Exception as e:
         logger.info("Exception occured:" + str(e))
         aetest.steps.Step.failed('Validation failed. Expected: ' + str(action_vars))
+
+
+def update_dict(d, u):
+    for k, v in u.items():
+        if isinstance(v, collections.abc.Mapping):
+            d[k] = update_dict(d.get(k, {}), v)
+        else:
+            d[k] = v
+    return d
+
+def setenv(params):
+    for p in params:
+        os.environ[p.replace("-","_")] = str(params[p])
+
+def get_all_values(dictionary, key):
+    values = []
+    generator = item_generator(dictionary, key)
+    for v in generator:
+        values.append(v)
+    return values
+
+def get_first_value(dictionary, key):
+    generator = item_generator(dictionary, key)
+    for v in generator:
+        return(v)
 
 def go_sleep(testbed, device, action_vars, params):
     logger.info("Going to sleep for " + str(action_vars['seconds'].format_map(params)) + " seconds")

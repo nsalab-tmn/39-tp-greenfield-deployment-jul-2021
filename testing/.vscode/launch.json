@@ -9,7 +9,7 @@
             "type": "python",
             "request": "launch",  
             "args": [
-                "run", "job", "marking_job.py"
+                "run", "job", "marking_job.py", "--topology-file", "testbed-dummy.yaml", "--marking-file", "marking-audit.yaml", "--unit-test", "ut-audit.py"
             ],    
             "envFile": ".env",      
             "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",

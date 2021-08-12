@@ -1,0 +1,18 @@
+- desc: Login into Cloud53
+  device: dummy
+  action_chain:
+    - action: validate_web_response
+      action_vars:
+        name: '{cloud-53-base-url}/login'
+        headers:
+          - key: Ocp-Apim-Subscription-Key
+            value: '{Ocp-Apim-Subscription-Key}'
+          - key: Content-Type
+            value: application/json
+        method: POST
+        content: 
+          - key: UserName
+            value: '{cloud-53-login}'
+          - key: Password
+            value: '{cloud-53-password}'
+        set_params: True
