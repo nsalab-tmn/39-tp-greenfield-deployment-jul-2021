@@ -7,6 +7,8 @@ from time import sleep
 import logging
 import collections.abc
 logger = logging.getLogger(__name__)
+import sys
+import traceback
 
 def validate_web_response(testbed, device, action_vars, params): 
     try:
@@ -52,9 +54,6 @@ def validate_web_response(testbed, device, action_vars, params):
             j = response.json()
             for seq in range(len(action_vars['assert_json'])):
                 values = get_all_values(j, action_vars['assert_json'][seq]['key'])
-                # generator = item_generator(j, action_vars['assert_json'][seq]['key'])
-                # for v in generator:
-                #     values.append(v)
                 assert action_vars['assert_json'][seq]['value'] in values
         if 'assert_json_answer' in action_vars.keys():
             j = response.json()
@@ -75,10 +74,19 @@ def validate_web_response(testbed, device, action_vars, params):
                         answer = answer.lower()
                         correct_answer = correct_answer.lower()
                 assert correct_answer in answer
+    except AssertionError:
+        get_trace(sys.exc_info(), action_vars)
+        aetest.steps.Step.failed('Response: ' + response.text)
     except Exception as e:
-        logger.info("Exception occured:" + str(e))
-        aetest.steps.Step.failed('Validation failed. Expected: ' + str(action_vars))
+        get_trace(sys.exc_info(), action_vars)
+        aetest.steps.Step.failed("Exception occured:" + str(e))
 
+def get_trace(exc_info, vars):
+    _, _, tb = exc_info
+    tb_info = traceback.extract_tb(tb)
+    filename, line, func, text = tb_info[-1]
+    logger.info('Assertion failed on line {} in statement {}'.format(line, text))
+    logger.info('Expected: ' + str(vars))
 
 def update_dict(d, u):
     for k, v in u.items():

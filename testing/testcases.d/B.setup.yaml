@@ -15,4 +15,5 @@
             value: '{cloud-53-login}'
           - key: Password
             value: '{cloud-53-password}'
+        assert_code: 200
         set_params: True
