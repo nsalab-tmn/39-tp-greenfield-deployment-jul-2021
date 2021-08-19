@@ -1,0 +1,12 @@
+testbed:
+  name: ITNSA Greenfield Deployment Test Project
+  credentials:
+    default:
+      username: '%ENV{adminuser}'
+      password: '%ENV{password}'
+
+devices:
+  dummy:
+    connections:
+      a:
+        ip: localhost

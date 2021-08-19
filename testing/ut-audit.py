@@ -47,7 +47,7 @@ def process_steps(test_steps, testbed, steps, params):
 
 
 #testcase classes which will take data from datafile
-class Testcase_B4_1(aetest.Testcase):
+class Testcase_B1(aetest.Testcase):
     
     @aetest.setup
     def setup(self, testbed, steps, params):
@@ -65,16 +65,10 @@ class Testcase_B4_1(aetest.Testcase):
         if self.cleanup_steps is not None:
             process_steps(test_steps = self.cleanup_steps, testbed = testbed, steps=steps, params=params)
             
-class Testcase_B4_2(Testcase_B4_1):
+class Testcase_B2(Testcase_B1):
     pass
 
-class Testcase_B4_3(Testcase_B4_1):
-    pass
-
-class Testcase_B5_1(Testcase_B4_1):
-    pass
-
-class Testcase_B5_2(Testcase_B4_1):
+class Testcase_B3(Testcase_B2):
     pass
 
 # main()

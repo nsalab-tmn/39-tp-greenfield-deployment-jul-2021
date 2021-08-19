@@ -11,7 +11,9 @@
             value: application/json
           - key: Host
             value: app.{dns-zone}
-        content: '{"Health":false}'
+        content: 
+          - key: Health
+            value: False
         method: POST
         assert_code: 202
         assert_json:
@@ -30,7 +32,9 @@
             value: application/json
           - key: Host
             value: app.{dns-zone}
-        content: '{"Health":false}'
+        content: 
+          - key: Health
+            value: False
         method: POST
         assert_code: 202
         assert_json:
@@ -49,7 +53,9 @@
             value: application/json
           - key: Host
             value: app.{dns-zone}
-        content: '{"Health":false}'
+        content: 
+          - key: Health
+            value: False
         method: POST
         assert_code: 202
         assert_json:

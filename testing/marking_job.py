@@ -1,29 +1,14 @@
 import yaml
 import json
-import os
 import io
 import pprint
-import collections.abc
-from virl2_client import ClientLibrary 
+
 from pyats.easypy import run
 from pyats.easypy import Task
 from genie import testbed
 from yamlinclude import YamlIncludeConstructor
 from argparse import ArgumentParser, Namespace
-
-
-def update_dict(d, u):
-    for k, v in u.items():
-        if isinstance(v, collections.abc.Mapping):
-            d[k] = update_dict(d.get(k, {}), v)
-        else:
-            d[k] = v
-    return d
-
-def setenv(params):
-    for p in params:
-        os.environ[p.replace("-","_")] = str(params[p])
-
+from assessment import update_dict, setenv
 
 
 def main(runtime):

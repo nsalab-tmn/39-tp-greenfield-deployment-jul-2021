@@ -1,0 +1,31 @@
+testcases:
+  Testcase_B1:
+    name: B1 - Information about border routing platform
+    setup_steps: !include B.setup.yaml
+    tests:
+      B1.N.01: !include B1.N.01.yaml
+      B1.N.02: !include B1.N.02.yaml
+      B1.N.03: !include B1.N.03.yaml
+      B1.N.04: !include B1.N.04.yaml
+      B1.N.05: !include B1.N.05.yaml
+      B1.N.06: !include B1.N.06.yaml
+    cleanup_steps: 
+  Testcase_B2:
+    name: B2 - Information about application hosting platform
+    setup_steps: 
+    tests:
+      B2.P.01: !include B2.P.01.yaml
+      B2.P.02: !include B2.P.02.yaml
+      B2.P.03: !include B2.P.03.yaml
+      B2.P.04: !include B2.P.04.yaml
+    cleanup_steps: 
+  Testcase_B3:
+    name: B3 - Information application and its dependencies
+    setup_steps: 
+    tests: 
+      B3.A.01: !include B3.A.01.yaml
+      B3.A.02: !include B3.A.02.yaml
+      B3.A.03: !include B3.A.03.yaml
+      B3.A.04: !include B3.A.04.yaml
+      B3.A.05: !include B3.A.05.yaml
+    cleanup_steps: 

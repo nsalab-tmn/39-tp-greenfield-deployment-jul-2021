@@ -1,4 +1,4 @@
-##EASTUS============
+##region-01============
 resource "azurerm_network_interface" "gw-region-01" {
   name                = "gw-region-01"
   location            = azurerm_resource_group.main.location
@@ -6,7 +6,7 @@ resource "azurerm_network_interface" "gw-region-01" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.eastus-private01.id
+    subnet_id                     = azurerm_subnet.region-01-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -22,7 +22,7 @@ resource "azurerm_network_interface" "gw-region-01-public" {
 
   ip_configuration {
     name                          = "public"
-    subnet_id                     = azurerm_subnet.eastus-public01.id
+    subnet_id                     = azurerm_subnet.region-01-public01.id
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -104,19 +104,19 @@ resource "azurerm_linux_virtual_machine" "gw-region-01" {
   custom_data = var.deploy_custom_data ? base64encode(templatefile("${path.module}/${var.assets_path}/customdata-gw-region-01.tpl", { 
     westip = azurerm_public_ip.gw-region-02.ip_address, 
     southip = azurerm_public_ip.gw-region-03.ip_address,
-    priv_ubuntu=azurerm_network_interface.platform-region-01.private_ip_address, priv_network=cidrhost(azurerm_subnet.eastus-private01.address_prefixes[0],0),
+    priv_ubuntu=azurerm_network_interface.platform-region-01.private_ip_address, priv_network=cidrhost(azurerm_subnet.region-01-private01.address_prefixes[0],0),
     adminuser=var.adminuser,
     password=random_string.pass.result })):null
 }
-##WESTUS============
+##region-02============
 resource "azurerm_network_interface" "gw-region-02" {
   name                = "gw-region-02"
-  location            = "westus"
+  location            = "westcentralus"
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.westus-private01.id
+    subnet_id                     = azurerm_subnet.region-02-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -132,7 +132,7 @@ resource "azurerm_network_interface" "gw-region-02-public" {
 
   ip_configuration {
     name                          = "public"
-    subnet_id                     = azurerm_subnet.westus-public01.id
+    subnet_id                     = azurerm_subnet.region-02-public01.id
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -215,12 +215,12 @@ resource "azurerm_linux_virtual_machine" "gw-region-02" {
     eastip = azurerm_public_ip.gw-region-01.ip_address, 
     southip = azurerm_public_ip.gw-region-03.ip_address,   
     priv_ubuntu=azurerm_network_interface.platform-region-02.private_ip_address, 
-    priv_network=cidrhost(azurerm_subnet.westus-private01.address_prefixes[0],0),
+    priv_network=cidrhost(azurerm_subnet.region-02-private01.address_prefixes[0],0),
     adminuser=var.adminuser,
     password=random_string.pass.result })):null
 }
 
-##SOUTHCENTRALUS============
+##region-03============
 resource "azurerm_network_interface" "gw-region-03" {
   name                = "gw-region-03"
   location            = "southcentralus"
@@ -228,7 +228,7 @@ resource "azurerm_network_interface" "gw-region-03" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.southcentralus-private01.id
+    subnet_id                     = azurerm_subnet.region-03-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -244,7 +244,7 @@ resource "azurerm_network_interface" "gw-region-03-public" {
 
   ip_configuration {
     name                          = "public"
-    subnet_id                     = azurerm_subnet.southcentralus-public01.id
+    subnet_id                     = azurerm_subnet.region-03-public01.id
     private_ip_address_allocation = "Static" #have to be Dynamic according to template. why?
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -327,7 +327,7 @@ resource "azurerm_linux_virtual_machine" "gw-region-03" {
     eastip = azurerm_public_ip.gw-region-01.ip_address, 
     westip = azurerm_public_ip.gw-region-02.ip_address,   
     priv_ubuntu=azurerm_network_interface.platform-region-03.private_ip_address, 
-    priv_network=cidrhost(azurerm_subnet.southcentralus-private01.address_prefixes[0],0),
+    priv_network=cidrhost(azurerm_subnet.region-03-private01.address_prefixes[0],0),
     adminuser=var.adminuser,
     password=random_string.pass.result })):null
 }

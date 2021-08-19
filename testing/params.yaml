@@ -1,6 +1,12 @@
+competition-id: 61da0593-fa9e-11eb-9a38-e5523ddb5e74
+Ocp-Apim-Subscription-Key: ff339f2b511144a8aa85dc8892efbd16
+cloud-53-login: admin
+cloud-53-password: pass01
+cloud-53-base-url: 'https://cloud53-dev-apim.azure-api.net/cloud53-dev'
+default-ping-count: 5
 default-sleep-timer: 3
 external-host-ip: 1.1.1.1
-web-53-auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjg0Njg3NDYsIm5iZiI6MTYyODQzMjc0Niwic3ViIjoiYWRtaW4ifQ.jfF7ni80HJOg-cPSGNLh7uDGJbxd55C_A3oJp1eTNjQ'
+web-53-auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjg1NTI2MTcsIm5iZiI6MTYyODUxNjYxNywic3ViIjoiYWRtaW4ifQ.rSOd2ZRB7hOGOFm5up4f3h0nEh4UgjQISMQ8WzMKmKs'
 linux-ping-parser: 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
 skip_connections:
   - dummy

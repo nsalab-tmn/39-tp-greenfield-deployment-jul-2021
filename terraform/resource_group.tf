@@ -1,6 +1,6 @@
 resource "azurerm_resource_group" "main" {
   name     = "rg-${var.competition_instance}-${var.prefix}"
-  location = "eastus"
+  location = "eastus2"
 }
 
 resource "random_string" "pass" {

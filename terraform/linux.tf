@@ -1,4 +1,4 @@
-##EASTUS============
+##region-01============
 resource "azurerm_network_interface" "platform-region-01" {
   name                = "platform-region-01"
   location            = azurerm_resource_group.main.location
@@ -6,7 +6,7 @@ resource "azurerm_network_interface" "platform-region-01" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.eastus-private01.id
+    subnet_id                     = azurerm_subnet.region-01-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -51,15 +51,15 @@ resource "azurerm_linux_virtual_machine" "platform-region-01" {
     platform_03_ip=azurerm_network_interface.platform-region-03.private_ip_address})):null
 }
 
-##WESTUS============
+##region-02============
 resource "azurerm_network_interface" "platform-region-02" {
   name                = "platform-region-02"
-  location            = "westus"
+  location            = "westcentralus"
   resource_group_name = azurerm_resource_group.main.name
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.westus-private01.id
+    subnet_id                     = azurerm_subnet.region-02-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true
@@ -104,7 +104,7 @@ resource "azurerm_linux_virtual_machine" "platform-region-02" {
     platform_03_ip=azurerm_network_interface.platform-region-03.private_ip_address})):null
 }
 
-##SOUTHCENTRALUS============
+##region-03============
 resource "azurerm_network_interface" "platform-region-03" {
   name                = "platform-region-03"
   location            = "southcentralus"
@@ -112,7 +112,7 @@ resource "azurerm_network_interface" "platform-region-03" {
 
   ip_configuration {
     name                          = "internal"
-    subnet_id                     = azurerm_subnet.southcentralus-private01.id
+    subnet_id                     = azurerm_subnet.region-03-private01.id
     private_ip_address_allocation = "Static"
     private_ip_address_version    = "IPv4"
     primary                       = true

@@ -1,12 +1,22 @@
 {
-    "gfd-39-comp-01": {
-      "ad-username": "gfd-39-comp-01@nsalab.org",
-      "adminuser": "azadmin",
-      "dns-zone": "gfd-39-comp-01.az.skillscloud.company",
-      "gw-01-public-ip": "20.106.137.54",
-      "gw-02-public-ip": "40.78.67.73",
-      "gw-03-public-ip": "70.37.95.20",
-      "password": "=grp8Zy108TC1Wcx",
-      "prefix": "gfd-39-comp-01"
-    }
+  "gfd-39-comp-01": {
+    "ad-username": "gfd-39-comp-01@nsalab.org",
+    "adminuser": "azadmin",
+    "dns-zone": "gfd-39-comp-01.az.skillscloud.company",
+    "gw-01-public-ip": "52.232.252.80",
+    "gw-02-public-ip": "52.161.99.223",
+    "gw-03-public-ip": "13.65.152.179",
+    "password": "X2BHd-5pC3hQXPgP",
+    "prefix": "gfd-39-comp-01"
+  },
+  "gfd-39-comp-02": {
+    "ad-username": "gfd-39-comp-02@nsalab.org",
+    "adminuser": "azadmin",
+    "dns-zone": "gfd-39-comp-02.az.skillscloud.company",
+    "gw-01-public-ip": "20.97.160.140",
+    "gw-02-public-ip": "13.77.218.94",
+    "gw-03-public-ip": "20.97.15.220",
+    "password": "2591NenOLK^LYaox",
+    "prefix": "gfd-39-comp-02"
   }
+}

@@ -87,6 +87,7 @@ variable "eastus_default_route" {
 
 module "competition" {
     source = "./terraform"
+<<<<<<< HEAD
     count = var.competition_count
     prefix = format("${var.prefix}%02d", count.index+1)
     deploy_routes = var.deploy_routes
@@ -95,6 +96,16 @@ module "competition" {
     assets_path = var.assets_path
     eastus_default_route = var.eastus_default_route
     competition_instance = var.competition_instance
+=======
+    count = 2
+    prefix = format("comp-%02d", count.index+1)
+    deploy_routes = true
+    deploy_dns_a_records = true
+    deploy_custom_data = true
+    assets_path = "assets"
+    region-01_default_route = true
+    competition_instance = "gfd-39"
+>>>>>>> 673bcc9acde6a9c7716cc0eb29402fbb1dc62df5
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result
     host_octets = random_shuffle.host_octet.result

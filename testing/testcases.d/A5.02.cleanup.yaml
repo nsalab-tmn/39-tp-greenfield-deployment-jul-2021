@@ -1,0 +1,27 @@
+- desc: bring back first app instance
+  device: platform-region-01
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: sudo docker restart web-53
+        tags_are_present: True
+        assert_tags:
+          - "web-53"
+- desc: bring back second app instance
+  device: platform-region-02
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: sudo docker restart web-53
+        tags_are_present: True
+        assert_tags:
+          - "web-53"
+- desc: bring back second app instance
+  device: platform-region-03
+  action_chain:
+    - action: verify_output
+      action_vars:
+        command: sudo docker restart web-53
+        tags_are_present: True
+        assert_tags:
+          - "web-53"

@@ -12,7 +12,7 @@
   action_chain:
     - action: verify_output
       action_vars:
-        command: ping -c10 {platform-01-ip} {linux-ping-parser}
+        command: ping -c{default-ping-count} {platform-01-ip} {linux-ping-parser}
         tags_are_present: True
         assert_tags:
           - "OK"
