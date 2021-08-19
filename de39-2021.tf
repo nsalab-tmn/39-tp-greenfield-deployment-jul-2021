@@ -40,16 +40,61 @@ resource "random_shuffle" "host_octet" {
   seed = random_string.seed[2].result
 }
 
-module "competion" {
+variable prefix {
+  default = "comp-"
+}
+variable competition_instance {
+  default = "gfd-39"
+}
+
+variable competition_count {
+  default = 1
+}
+
+variable "deploy_custom_data" {
+  default = false
+  type = bool
+}
+
+variable "deploy_routes" {
+  default = false
+  type = bool
+}
+
+variable "deploy_dns_a_records" {
+  default = false
+  type = bool
+}
+
+variable "assets_path" {
+  type = string
+  default = "assets"
+  validation {
+    condition     = (var.assets_path == "assets" ||  
+      var.assets_path == "assets-tshoot") 
+    error_message = "The assets_path variable must be equal to `assets` or `assets-tshoot`."
+  }
+  description = "The assets path for custom data. It works only if deploy_custom_data variable is set."
+}
+
+variable "eastus_default_route" {
+  default = true
+  type = bool
+  description = "Set this variable only when finished custom_data deployment"
+
+}
+
+
+module "competition" {
     source = "./terraform"
-    count = 2
-    prefix = format("comp-%02d", count.index+1)
-    deploy_routes = true
-    deploy_dns_a_records = true
-    deploy_custom_data = true
-    assets_path = "assets-tshoot"
-    eastus_default_route = false
-    competition_instance = "gfd-39"
+    count = var.competition_count
+    prefix = format("${var.prefix}%02d", count.index+1)
+    deploy_routes = var.deploy_routes
+    deploy_dns_a_records = var.deploy_dns_a_records
+    deploy_custom_data = var.deploy_custom_data
+    assets_path = var.assets_path
+    eastus_default_route = var.eastus_default_route
+    competition_instance = var.competition_instance
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result
     host_octets = random_shuffle.host_octet.result
@@ -60,13 +105,13 @@ output "seeds" {
 }
 
 output "passwords" {
-  value =  module.competion.*.pass 
+  value =  module.competition.*.pass 
 }
 
 output "static-params" {
-  value =  module.competion[0].static-params 
+  value =  module.competition[0].static-params 
 }
 
 output "dynamic-params" {
-  value = merge(module.competion.*.dynamic-params...)
+  value = merge(module.competition.*.dynamic-params...)
 }
