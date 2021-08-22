@@ -34,7 +34,7 @@
 #### Параметры командной строки
 Вызвать справку приложения можно с помощью команды `./web-53 -h`:
 ```
-Usage: web-53-21.08.03 [-hpsv] [-c value] [-t value] [parameters ...]
+Usage: web-53 [-hpsv] [-c value] [-t value] [parameters ...]
  -c, --config=value
                     config file; config.yaml by default
  -h, --help         Help
