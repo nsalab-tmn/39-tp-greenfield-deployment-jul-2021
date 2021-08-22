@@ -9,6 +9,7 @@ import collections.abc
 logger = logging.getLogger(__name__)
 import sys
 import traceback
+import json
 
 def validate_web_response(testbed, device, action_vars, params): 
     try:
@@ -24,7 +25,7 @@ def validate_web_response(testbed, device, action_vars, params):
             method = action_vars['method']
         if 'content' in action_vars.keys():
             c = kv_to_dict(action_vars['content'], params)
-            content = str(c).replace('\'','"')
+            content = json.dumps(c)
             #content = action_vars['content'].format_map(params)
         
         request = httpx.Request(method = method,
@@ -119,7 +120,12 @@ def go_sleep(testbed, device, action_vars, params):
 def kv_to_dict(kvdict, params): 
     d = {}
     for seq in kvdict: 
-        d[str(seq['key']).format_map(params)] = str(seq['value']).format_map(params) 
+        if type(seq['key']) == str: k = seq['key'].format_map(params) 
+        else: k = seq['key'] 
+        if type(seq['value']) == str: v = seq['value'].format_map(params) 
+        else: v = seq['value'] 
+        d[k] = v 
+        # d[str(seq['key']).format_map(params)] = str(seq['value']).format_map(params) 
         #append({str(kvdict[seq]['key']).format_map(params): str(kvdict[seq]['value']).format_map(params)}) 
     return d 
 

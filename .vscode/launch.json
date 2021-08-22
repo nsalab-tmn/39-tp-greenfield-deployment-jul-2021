@@ -1,0 +1,44 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Greenfield",
+            "type": "python",
+            "request": "launch",  
+            "args": [
+                "run", "job", "testing/marking_job.py",
+                "--topology-file", "testing/testbed.yaml",
+                "--marking-file","testing/marking.yaml", 
+                "--include-basedir","testing/testcases.d", 
+                "--internal-params","testing/params.yaml", 
+                "--static-params","testing/tf-static-params.json", 
+                "--dynamic-params","testing/tf-dynamic-params.json", 
+                "--unit-test", "testing/ut.py"
+            ],    
+            "envFile": ".env",      
+            "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",
+            "console": "integratedTerminal"
+        },
+        {
+            "name": "Tshoot-audit",
+            "type": "python",
+            "request": "launch",  
+            "args": [
+                "run", "job", "testing/marking_job.py",
+                "--topology-file", "testing/testbed.yaml",
+                "--marking-file","testing/marking-tshoot-audit.yaml", 
+                "--include-basedir","testing/testcases.d", 
+                "--internal-params","testing/params.yaml", 
+                "--static-params","testing/tf-static-params.json", 
+                "--dynamic-params","testing/tf-dynamic-params.json", 
+                "--unit-test", "testing/ut-tshoot-audit.py"
+            ],    
+            "envFile": ".env",      
+            "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",
+            "console": "integratedTerminal"
+        }
+    ]
+}

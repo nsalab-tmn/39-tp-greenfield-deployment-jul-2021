@@ -1,0 +1,64 @@
+testcases:
+  Testcase_B1:
+    name: B1 - Information about border routing platform
+    setup_steps: !include B.setup.yaml
+    tests:
+      B1.N.01: !include B1.N.01.yaml
+      B1.N.02: !include B1.N.02.yaml
+      B1.N.03: !include B1.N.03.yaml
+      B1.N.04: !include B1.N.04.yaml
+      B1.N.05: !include B1.N.05.yaml
+      B1.N.06: !include B1.N.06.yaml
+    cleanup_steps: 
+  Testcase_B2:
+    name: B2 - Information about application hosting platform
+    setup_steps: 
+    tests:
+      B2.P.01: !include B2.P.01.yaml
+      B2.P.02: !include B2.P.02.yaml
+      B2.P.03: !include B2.P.03.yaml
+      B2.P.04: !include B2.P.04.yaml
+    cleanup_steps: 
+  Testcase_B3:
+    name: B3 - Information application and its dependencies
+    setup_steps: 
+    tests: 
+      B3.A.01: !include B3.A.01.yaml
+      B3.A.02: !include B3.A.02.yaml
+      B3.A.03: !include B3.A.03.yaml
+      B3.A.04: !include B3.A.04.yaml
+      B3.A.05: !include B3.A.05.yaml
+    cleanup_steps: 
+  Testcase_B4_1:
+    name: B4 - Connectivity fault-tolerance (case 1)
+    setup_steps: !include A3.01.setup.yaml
+    tests:
+      Case_01: !include A3.01.yaml
+    cleanup_steps: !include A3.01.cleanup.yaml
+  Testcase_B4_2:
+    name: B4 - Connectivity fault-tolerance (case 2)
+    setup_steps: !include A3.02.setup.yaml
+    tests:
+      Case_02: !include A3.02.yaml
+    cleanup_steps: !include A3.02.cleanup.yaml
+  Testcase_B4_3:
+    name: B4 - Connectivity fault-tolerance (case 3)
+    setup_steps: !include A3.03.setup.yaml
+    tests:
+      Case_03: !include A3.03.yaml
+    cleanup_steps: !include A3.03.cleanup.yaml
+  Testcase_B5_1:
+    name: B5 - Application fault-tolerance (DNS and internetwork)
+    setup_steps: !include A5.01.setup.yaml
+    tests:
+      Internetwork_FT: !include A5.01.02.yaml
+    cleanup_steps: !include A5.01.cleanup.yaml
+  Testcase_B5_2:
+    name: B5 - Application fault-tolerance (Respawn and reverse proxy)
+    setup_steps: 
+    tests:
+      Respawn_test_01: !include A5.02.yaml
+      Respawn_test_02: !include A5.02.yaml
+      Respawn_test_03: !include A5.02.yaml
+      Reverse_proxy_test: !include A5.02.01.04.yaml
+    cleanup_steps: !include A5.02.cleanup.yaml

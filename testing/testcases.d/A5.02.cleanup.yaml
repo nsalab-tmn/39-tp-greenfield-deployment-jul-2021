@@ -16,7 +16,7 @@
         tags_are_present: True
         assert_tags:
           - "web-53"
-- desc: bring back second app instance
+- desc: bring back third app instance
   device: platform-region-03
   action_chain:
     - action: verify_output
