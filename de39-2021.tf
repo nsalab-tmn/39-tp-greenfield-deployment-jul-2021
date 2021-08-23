@@ -48,7 +48,7 @@ variable competition_instance {
 }
 
 variable competition_count {
-  default = 1
+  default = 14
 }
 
 variable "deploy_custom_data" {
@@ -78,7 +78,7 @@ variable "assets_path" {
 }
 
 variable "eastus_default_route" {
-  default = true
+  default = false
   type = bool
   description = "Set this variable only when finished custom_data deployment"
 
@@ -93,7 +93,7 @@ module "competition" {
     deploy_dns_a_records = var.deploy_dns_a_records
     deploy_custom_data = var.deploy_custom_data
     assets_path = var.assets_path
-    eastus_default_route = var.eastus_default_route
+    # eastus_default_route = var.eastus_default_route
     competition_instance = var.competition_instance
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result
