@@ -6,7 +6,7 @@ cloud-53-base-url: 'https://cloud53-dev-apim.azure-api.net/cloud53-dev/v210821'
 default-ping-count: 3
 default-sleep-timer: 10
 external-host-ip: 1.1.1.1
-web-53-auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk2ODQyMjYsIm5iZiI6MTYyOTY0ODIyNiwic3ViIjoiYWRtaW4ifQ.EHFbG0qxaLvf4b0hiEwubf2qTFMiUzYkBoYROCemwhg'
+web-53-auth: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE2Mjk5OTUzODksIm5iZiI6MTYyOTk1OTM4OSwic3ViIjoiYWRtaW4ifQ.G0D8fkCROqpRH_p9FUgkW8Z6unJWHfr2VaZLRukW5Fs'
 linux-ping-parser: 2>&1 | awk -F'/' 'END{ print (/^rtt/? "OK "$5" ms":"FAIL") }'
 skip_connections:
   - dummy
