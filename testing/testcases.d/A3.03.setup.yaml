@@ -10,3 +10,6 @@
         commands: 
           - interface {outgoing_interface}
           - shutdown
+    - action: go_sleep
+      action_vars:
+        seconds: '{default-sleep-timer}'

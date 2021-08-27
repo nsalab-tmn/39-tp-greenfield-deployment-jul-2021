@@ -19,7 +19,7 @@
                 "--unit-test", "testing/ut.py"
             ],    
             "envFile": ".env",      
-            "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",
+            "program": "/home/superadmin/venv-pyats/bin/pyats",
             "console": "integratedTerminal"
         },
         {
@@ -37,7 +37,7 @@
                 "--unit-test", "testing/ut-tshoot-audit.py"
             ],    
             "envFile": ".env",      
-            "program": "/home/menus12/dev/venv-pyats-latest/bin/pyats",
+            "program": "/home/superadmin/venv-pyats/bin/pyats",
             "console": "integratedTerminal"
         }
     ]

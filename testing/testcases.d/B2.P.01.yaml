@@ -11,4 +11,4 @@
             value: '{Ocp-Apim-Subscription-Key}'
         assert_json_answer:
           - key: B2.P.01
-            value: 5.8.0-1039-azure
+            value: 5.8.0-1040-azure
