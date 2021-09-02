@@ -1,3 +1,16 @@
+terraform {
+  required_providers {
+    azuread = {
+      version = "~> 1.6.0"
+      source  = "hashicorp/azuread"
+    }
+    random = {
+      version = "~> 3.1.0"
+      source  = "hashicorp/random"
+    }
+  }
+}
+
 resource "azurerm_resource_group" "main" {
   name     = "rg-${var.competition_instance}-${var.prefix}"
   location = "westus2"
