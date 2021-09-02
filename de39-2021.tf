@@ -48,27 +48,27 @@ variable competition_instance {
 }
 
 variable competition_count {
-  default = 14
+  default = 13
 }
 
 variable "deploy_custom_data" {
-  default = false
+  default = true
   type = bool
 }
 
 variable "deploy_routes" {
-  default = false
+  default = true
   type = bool
 }
 
 variable "deploy_dns_a_records" {
-  default = false
+  default = true
   type = bool
 }
 
 variable "assets_path" {
   type = string
-  default = "assets"
+  default = "assets-tshoot"
   validation {
     condition     = (var.assets_path == "assets" ||  
       var.assets_path == "assets-tshoot") 
@@ -93,7 +93,7 @@ module "competition" {
     deploy_dns_a_records = var.deploy_dns_a_records
     deploy_custom_data = var.deploy_custom_data
     assets_path = var.assets_path
-    # eastus_default_route = var.eastus_default_route
+    region-01_default_route = var.eastus_default_route
     competition_instance = var.competition_instance
     region_octets = random_shuffle.region_octet.result
     subnet_octets = random_shuffle.subnet_octet.result

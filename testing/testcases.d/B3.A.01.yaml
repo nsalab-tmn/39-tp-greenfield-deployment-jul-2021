@@ -11,4 +11,4 @@
             value: '{Ocp-Apim-Subscription-Key}'
         assert_json_answer:
           - key: B3.A.01
-            value: 21.08.03
+            value: 21.06.01
